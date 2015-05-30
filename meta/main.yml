@@ -1,4 +1,16 @@
 ---
 
+galaxy_info:
+  author: "Wojtek Oledzki"
+  description: "Install the Go Continuous Delivery server."
+  license: MIT
+  min_ansible_version: 1.8
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+  categories:
+    - development
+
 dependencies:
   - java
