@@ -1,0 +1,21 @@
+---
+
+- name: create various directories
+  sudo: yes
+  file:
+    path: "{{ gocd_server.user_dir }}/{{ item }}"
+    state: directory
+    owner: "{{ gocd_server.user }}"
+    group: "{{ gocd_server.group }}"
+  with_items:
+    - work/go-server
+
+- name: Ensures go-server configuration
+  sudo: yes
+  template:
+    src: defaults.j2
+    dest: /etc/default/go-server
+    owner: "{{ gocd_server.user }}"
+    group: "{{ gocd_server.group }}"
+  notify:
+    - restart go-server

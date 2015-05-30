@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+
+export GO_SERVER_PORT={{ gocd_server.port }}
+export GO_SERVER_SSL_PORT={{ gocd_server.port_ssl }}
+export JAVA_HOME={{ gocd_server.java_home }}
+export SERVER_WORK_DIR={{ gocd_server.user_dir }}/work/go-server
+export SERVER_MEM="{{ gocd_server.server_mem }}"
+export SERVER_MAX_MEM="{{ gocd_server.server_max_mem }}"
+export SERVER_MAX_PERM_GEN="{{ gocd_server.server_max_perm_gen }}"
+export SERVER_MIN_PERM_GEN="{{ gocd_server.server_min_perm_gen }}"
+DAEMON=Y
+VNC=N
+
+##
+# ensures ssh-agent is running
+#
+if [[ $USER == "{{ gocd_server.user }}" ]];
+then
+	if [ -z "$SSH_AUTH_SOCK" ]; then
+		eval `ssh-agent -s`
+		ssh-add
+	fi
+fi

@@ -1,0 +1,17 @@
+---
+
+gocd_server:
+  version: "14.4.*"
+
+  group: go
+  user: go
+  user_dir: /home/go
+
+  java_home: /usr/lib/jvm/java-7-oracle/jre
+  port: 8153
+  port_ssl: 8154
+
+  server_max_mem: 512m
+  server_max_perm_gen: 128m
+  server_mem: 256m
+  server_min_perm_gen: 128m
