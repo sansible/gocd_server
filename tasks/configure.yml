@@ -1,7 +1,7 @@
 ---
 
 - name: create various directories
-  sudo: yes
+  become: yes
   file:
     path: "{{ gocd_server.user_dir }}/{{ item }}"
     state: directory
@@ -11,7 +11,7 @@
     - work/go-server
 
 - name: Ensures go-server configuration
-  sudo: yes
+  become: yes
   template:
     src: defaults.j2
     dest: /etc/default/go-server
@@ -21,7 +21,7 @@
     - restart go-server
 
 - name: Ensures go-server passwd file
-  sudo: yes
+  become: yes
   template:
     src: passwd.j2
     dest: "{{ gocd_server.user_dir }}/passwd"
@@ -31,7 +31,7 @@
   when: gocd_server.passwd_users
 
 - name: Ensure gocd server is running
-  sudo: yes
+  become: yes
   service:
     name: go-server
     state: started

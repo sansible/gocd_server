@@ -62,7 +62,7 @@ To simply install GO CD server:
 
   pre_tasks:
     - name: Update apt
-      sudo: yes
+      become: yes
       command: apt-get update
       tags:
         - build
@@ -79,7 +79,7 @@ A bit more advanced playbook to install on a box with more then 4GB ram:
 
   pre_tasks:
     - name: Update apt
-      sudo: yes
+      become: yes
       command: apt-get update
       tags:
         - build
@@ -102,14 +102,14 @@ A bit more advanced playbook to install on a box with more then 4GB ram:
 
   pre_tasks:
     - name: Update apt
-      sudo: yes
+      become: yes
       command: apt-get update
       tags:
         - build
 
   roles:
-    - role: my-own.java
-    - role: ansible-city.gocd_server
+    - name: my-own.java
+    - name: ansible-city.gocd_server
       gocd_server:
         dependencies:
           skip_java: yes
@@ -124,13 +124,13 @@ To **generate passwd file** you have to specify a dictionary of
 
   pre_tasks:
     - name: Update apt
-      sudo: yes
+      become: yes
       command: apt-get update
       tags:
         - build
 
   roles:
-    - role: ansible-city.gocd_server
+    - name: ansible-city.gocd_server
       gocd_server:
         passwd_users:
           test.user: "{SHA}iCKdyZxzuc4lU6CCoqsp4H99608="

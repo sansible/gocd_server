@@ -1,19 +1,19 @@
 ---
 
 - name: Ensure hostname is resolvable
-  sudo: yes
+  become: yes
   lineinfile:
     dest: /etc/hosts
     line: "127.0.0.1 {{ ansible_hostname }}"
 
 - name: Ensure go group
-  sudo: yes
+  become: yes
   group:
     name: "{{ gocd_server.group }}"
     state: present
 
 - name: Ensure go user
-  sudo: yes
+  become: yes
   user:
     name: "{{ gocd_server.user }}"
     comment: Go CD User
@@ -21,7 +21,7 @@
     home: "{{ gocd_server.user_dir }}"
 
 - name: Install some dependencies
-  sudo: yes
+  become: yes
   apt:
     name: "{{ item }}"
   with_items:
@@ -29,20 +29,20 @@
     - tree
 
 - name: add GO CD apt repository
-  sudo: yes
+  become: yes
   apt_repository:
     repo: deb http://dl.bintray.com/gocd/gocd-deb/ /
     state: present
 
 - name: Install go-server
-  sudo: yes
+  become: yes
   apt:
     name: "go-server={{ gocd_server.version }}"
     state: present
     force: yes
 
 - name: Add go-server to autostart
-  sudo: yes
+  become: yes
   service:
     name: go-server
     enabled: yes
