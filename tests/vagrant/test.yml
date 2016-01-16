@@ -5,10 +5,12 @@
 
   pre_tasks:
     - name: Update apt
-      sudo: yes
-      command: apt-get update
+      become: yes
+      apt:
+        cache_valid_time: 1800
+        update_cache: yes
       tags:
         - build
 
   roles:
-    - ansible-city.gocd_server
+    - name: ansible-city.gocd_server

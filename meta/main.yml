@@ -4,18 +4,19 @@ galaxy_info:
   author: "Wojtek Oledzki"
   description: "Install the Go Continuous Delivery server."
   license: MIT
-  min_ansible_version: 1.8
+  min_ansible_version: 1.9
   platforms:
     - name: Ubuntu
       versions:
         - all
   categories:
     - development
+    - cd
 
 dependencies:
-  - role: ansible-city.java
-    name: ansible-city.java
-    src: git+git@github.com:ansible-city/java.git
+  - name: ansible-city.java
+    src: https://github.com/ansible-city/java.git
+    scm: git
     tags:
       - build
     when: not gocd_server.dependencies.skip_java

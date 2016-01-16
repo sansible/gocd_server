@@ -1,19 +1,19 @@
 ---
 
 - name: start go-server
-  sudo: yes
+  become: yes
   service:
     name: go-server
     state: started
 
 - name: stop go-server
-  sudo: yes
+  become: yes
   service:
     name: go-server
     state: stopped
 
 - name: restart go-server
-  sudo: yes
+  become: yes
   service:
     name: go-server
     state: restarted

@@ -1,4 +1,6 @@
 
+BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
+
 all: test clean
 
 test: test_deps vagrant_up
@@ -10,8 +12,13 @@ test_deps:
 	ln -s ../.. tests/vagrant/ansible-city.gocd_server
 	ansible-galaxy install --force -p tests/vagrant -r tests/vagrant/local_requirements.yml
 
-integration_test:
-	ansible-galaxy install --force -p tests/vagrant -r tests/vagrant/integration_requirements.yml
+integration_test_deps:
+	sed -i.bak \
+		-E 's/(.*)version: (.*)/\1version: origin\/$(BRANCH)/' \
+		tests/vagrant/integration_requirements.yml
+	rm -rf tests/vagrant/ansible-city.*
+	ansible-galaxy install -p tests/vagrant -r tests/vagrant/integration_requirements.yml
+	mv tests/vagrant/integration_requirements.yml.bak tests/vagrant/integration_requirements.yml
 
 vagrant_up:
 	@cd tests/vagrant; \
@@ -21,6 +28,11 @@ vagrant_up:
 	else \
 		vagrant up || exit 1; \
 	fi;
+
+vagrant_ssh:
+	@cd tests/vagrant; \
+	vagrant up || exit 1; \
+	vagrant ssh
 
 clean:
 	rm -rf tests/vagrant/ansible-city.*
