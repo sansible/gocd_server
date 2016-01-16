@@ -1,4 +1,5 @@
 ---
 
 - name: ansible-city.java
-  src: git+git@github.com:ansible-city/java.git
+  src: https://github.com/ansible-city/java.git
+  scm: git
