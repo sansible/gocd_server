@@ -1,0 +1,14 @@
+---
+
+- name: Test GOCD Server
+  hosts: all
+
+  pre_tasks:
+    - name: Update apt
+      sudo: yes
+      command: apt-get update
+      tags:
+        - build
+
+  roles:
+    - ansible-city.gocd_server

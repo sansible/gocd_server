@@ -1,0 +1,4 @@
+---
+
+- name: ansible-city.java
+  src: git+git@github.com:ansible-city/java.git

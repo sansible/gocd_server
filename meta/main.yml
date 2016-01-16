@@ -13,4 +13,6 @@ galaxy_info:
     - development
 
 dependencies:
-  - java
+  - role: ansible-city.java
+    tags:
+      - build

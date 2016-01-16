@@ -1,29 +1,11 @@
 ---
 
-- name: add go group
-  sudo: yes
-  group:
-    name: "{{ gocd_server.group }}"
-    state: present
-
-- name: add go user with home at /var/go
-  sudo: yes
-  user:
-    name: "{{ gocd_server.user }}"
-    comment: Go CD User
-    group: "{{ gocd_server.group }}"
-    home: "{{ gocd_server.user_dir }}"
-
-- name: Install some dependencies
-  sudo: yes
-  apt:
-    name: "{{ item }}"
-  with_items:
-    - git
-    - tree
-
 - name: install go server
-  include: install.yml
+  include: build.yml
+  tags:
+    - build
 
 - name: install go server
   include: configure.yml
+  tags:
+    - configure

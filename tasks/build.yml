@@ -1,0 +1,43 @@
+---
+
+- name: add go group
+  sudo: yes
+  group:
+    name: "{{ gocd_server.group }}"
+    state: present
+
+- name: add go user with home at /var/go
+  sudo: yes
+  user:
+    name: "{{ gocd_server.user }}"
+    comment: Go CD User
+    group: "{{ gocd_server.group }}"
+    home: "{{ gocd_server.user_dir }}"
+
+- name: Install some dependencies
+  sudo: yes
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - git
+    - tree
+
+- name: add GO CD apt repository
+  sudo: yes
+  apt_repository:
+    repo: deb http://dl.bintray.com/gocd/gocd-deb/ /
+    state: present
+
+- name: install go-server
+  sudo: yes
+  apt:
+    name: "go-server={{ gocd_server.version }}"
+    state: present
+    force: yes
+
+- name: enable go-server
+  sudo: yes
+  service:
+    name: go-server
+    enabled: yes
+    state: started
