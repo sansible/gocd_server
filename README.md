@@ -114,3 +114,24 @@ A bit more advanced playbook to install on a box with more then 4GB ram:
         dependencies:
           skip_java: yes
 ```
+
+To **generate passwd file** you have to specify a dictionary of
+`username:sha-passwd`
+
+```YAML
+- name: Install GO CD Server
+  hosts: sandbox
+
+  pre_tasks:
+    - name: Update apt
+      sudo: yes
+      command: apt-get update
+      tags:
+        - build
+
+  roles:
+    - role: ansible-city.gocd_server
+      gocd_server:
+        passwd_users:
+          test.user: "{SHA}iCKdyZxzuc4lU6CCoqsp4H99608="
+```

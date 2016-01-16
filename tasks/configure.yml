@@ -19,3 +19,19 @@
     group: "{{ gocd_server.group }}"
   notify:
     - restart go-server
+
+- name: Ensures go-server passwd file
+  sudo: yes
+  template:
+    src: passwd.j2
+    dest: "{{ gocd_server.user_dir }}/passwd"
+    owner: "{{ gocd_server.user }}"
+    group: "{{ gocd_server.group }}"
+    mode: 0540
+  when: gocd_server.passwd_users
+
+- name: Ensure gocd server is running
+  sudo: yes
+  service:
+    name: go-server
+    state: started

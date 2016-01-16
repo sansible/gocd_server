@@ -1,0 +1,6 @@
+##
+# {{ ansible_managed }}
+
+{% for name, passwd in gocd_server.passwd_users.iteritems() %}
+{{ name }}:{{ passwd }}
+{% endfor %}

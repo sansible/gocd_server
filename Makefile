@@ -22,6 +22,11 @@ vagrant_up:
 		vagrant up || exit 1; \
 	fi;
 
+vagrant_ssh:
+	@cd tests/vagrant; \
+	vagrant up || exit 1; \
+	vagrant ssh
+
 clean:
 	rm -rf tests/vagrant/ansible-city.*
 	cd tests/vagrant && vagrant destroy

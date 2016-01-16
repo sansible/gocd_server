@@ -1,12 +1,18 @@
 ---
 
-- name: add go group
+- name: Ensure hostname is resolvable
+  sudo: yes
+  lineinfile:
+    dest: /etc/hosts
+    line: "127.0.0.1 {{ ansible_hostname }}"
+
+- name: Ensure go group
   sudo: yes
   group:
     name: "{{ gocd_server.group }}"
     state: present
 
-- name: add go user with home at /var/go
+- name: Ensure go user
   sudo: yes
   user:
     name: "{{ gocd_server.user }}"
@@ -28,16 +34,16 @@
     repo: deb http://dl.bintray.com/gocd/gocd-deb/ /
     state: present
 
-- name: install go-server
+- name: Install go-server
   sudo: yes
   apt:
     name: "go-server={{ gocd_server.version }}"
     state: present
     force: yes
 
-- name: enable go-server
+- name: Add go-server to autostart
   sudo: yes
   service:
     name: go-server
     enabled: yes
-    state: started
+    state: stopped
