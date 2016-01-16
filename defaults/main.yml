@@ -15,3 +15,6 @@ gocd_server:
   server_max_perm_gen: 128m
   server_mem: 256m
   server_min_perm_gen: 128m
+
+  dependencies:
+    skip_java: no

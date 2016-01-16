@@ -14,5 +14,8 @@ galaxy_info:
 
 dependencies:
   - role: ansible-city.java
+    name: ansible-city.java
+    src: git+git@github.com:ansible-city/java.git
     tags:
       - build
+    when: not gocd_server.dependencies.skip_java
