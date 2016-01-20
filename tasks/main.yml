@@ -1,11 +1,11 @@
 ---
 
-- name: install go server
+- name: Install go server
   include: build.yml
   tags:
     - build
 
-- name: install go server
+- name: Configure go server
   include: configure.yml
   tags:
     - configure

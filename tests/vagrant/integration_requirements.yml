@@ -1,5 +1,4 @@
 ---
 
 - name: ansible-city.gocd_server
-  src: git+git@github.com:ansible-city/gocd_server.git
-  version: origin/master
+  version: v1.0

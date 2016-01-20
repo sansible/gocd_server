@@ -11,7 +11,7 @@ gocd_server:
   server_min_perm_gen: 128m
   user_dir: /home/go
   user: go
-  version: "14.4.*"
+  version: "15.3.*"
 
   dependencies:
     skip_java: no

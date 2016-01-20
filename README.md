@@ -1,7 +1,10 @@
 # GO CD Server
 
+Master: [![Build Status](https://travis-ci.org/ansible-city/gocd_server.svg?branch=master)](https://travis-ci.org/ansible-city/gocd_server)  
+Develop: [![Build Status](https://travis-ci.org/ansible-city/gocd_server.svg?branch=develop)](https://travis-ci.org/ansible-city/gocd_server)
+
 * [ansible.cfg](#ansible-cfg)
-* [Dependencies](#dependencies)
+* [Installation and Dependencies](#installation-and-dependencies)
 * [Tags](#tags)
 * [Examples](#examples)
 
@@ -25,19 +28,21 @@ hash_behaviour = merge
 
 
 
-## Dependencies
+## Installation and Dependencies
 
-To install dependencies, add this to your roles.yml
+This role has a "java" dependency. You can let this role install Oracle
+Java 7, or install it yourself and set `gocd_server.dependencies.skip_java`
+to `yes`.
+
+To install this role run `ansible-galaxy install ansible-city.gocd_server`
+or add this to your `roles.yml`
 
 ```YAML
----
-
 - name: ansible-city.gocd_server
-  src: git+git@github.com:ansible-city/gocd_server.git
-  version: origin/master # or any other tag/branch
+  version: v1.0
 ```
 
-and run `ansible-galaxy install -p . -r roles.yml`
+and run `ansible-galaxy install -p ./roles -r roles.yml`
 
 
 
@@ -68,7 +73,7 @@ To simply install GO CD server:
         - build
 
   roles:
-    - gocd_server
+    - name: ansible-city.gocd_server
 ```
 
 A bit more advanced playbook to install on a box with more then 4GB ram:
