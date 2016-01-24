@@ -3,6 +3,12 @@ BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
 
 all: test clean
 
+watch:
+	while sleep 1; do \
+		find defaults/ handlers/ meta/ tasks/ templates/ \
+		| entr -d make test; \
+	done
+
 test: test_deps vagrant_up
 
 integration_test: clean integration_test_deps vagrant_up clean

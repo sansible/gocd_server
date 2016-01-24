@@ -1,5 +1,4 @@
 ---
 
 - name: ansible-city.java
-  src: https://github.com/ansible-city/java.git
-  scm: git
+  version: v1.0

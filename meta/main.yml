@@ -15,8 +15,7 @@ galaxy_info:
 
 dependencies:
   - name: ansible-city.java
-    src: https://github.com/ansible-city/java.git
-    scm: git
+    version: v1.0
     tags:
       - build
     when: not gocd_server.dependencies.skip_java

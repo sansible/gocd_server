@@ -1,6 +1,6 @@
 ---
 
-- name: create various directories
+- name: Create various directories
   become: yes
   file:
     path: "{{ gocd_server.user_dir }}/{{ item }}"
