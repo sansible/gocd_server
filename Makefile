@@ -3,26 +3,26 @@ BRANCH?=$(shell git rev-parse --abbrev-ref HEAD)
 
 all: test clean
 
-watch:
+watch: test_deps
 	while sleep 1; do \
-		find defaults/ handlers/ meta/ tasks/ templates/ \
+		find defaults/ handlers/ meta/ tasks/ templates/ tests/vagrant/test.yml \
 		| entr -d make test; \
 	done
 
-test: test_deps vagrant_up
+test: vagrant_up
 
 integration_test: clean integration_test_deps vagrant_up clean
 
 test_deps:
-	rm -rf tests/vagrant/ansible-city.gocd_server
-	ln -s ../.. tests/vagrant/ansible-city.gocd_server
+	rm -rf tests/vagrant/sansible.gocd_server
+	ln -s ../.. tests/vagrant/sansible.gocd_server
 	ansible-galaxy install --force -p tests/vagrant -r tests/vagrant/local_requirements.yml
 
 integration_test_deps:
 	sed -i.bak \
 		-E 's/(.*)version: (.*)/\1version: origin\/$(BRANCH)/' \
 		tests/vagrant/integration_requirements.yml
-	rm -rf tests/vagrant/ansible-city.*
+	rm -rf tests/vagrant/sansible.*
 	ansible-galaxy install -p tests/vagrant -r tests/vagrant/integration_requirements.yml
 	mv tests/vagrant/integration_requirements.yml.bak tests/vagrant/integration_requirements.yml
 
@@ -36,10 +36,9 @@ vagrant_up:
 	fi;
 
 vagrant_ssh:
-	@cd tests/vagrant; \
-	vagrant up || exit 1; \
-	vagrant ssh
+	cd tests/vagrant && vagrant up
+	cd tests/vagrant && vagrant ssh
 
 clean:
-	rm -rf tests/vagrant/ansible-city.*
+	rm -rf tests/vagrant/sansible.*
 	cd tests/vagrant && vagrant destroy

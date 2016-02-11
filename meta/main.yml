@@ -8,13 +8,23 @@ galaxy_info:
   platforms:
     - name: Ubuntu
       versions:
-        - all
+        - precise
+        - trusty
   categories:
     - development
     - cd
 
 dependencies:
-  - name: ansible-city.java
+  - role: sansible.users_and_groups
+    version: v1.0
+    users_and_groups:
+      users:
+        - name: "{{ gocd_server.user }}"
+          gecos: Go CD user
+    tags:
+      - build
+
+  - role: sansible.java
     version: v1.0
     tags:
       - build

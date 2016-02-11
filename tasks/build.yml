@@ -6,27 +6,11 @@
     dest: /etc/hosts
     line: "127.0.0.1 {{ ansible_hostname }}"
 
-- name: Ensure go group
-  become: yes
-  group:
-    name: "{{ gocd_server.group }}"
-    state: present
-
-- name: Ensure go user
-  become: yes
-  user:
-    name: "{{ gocd_server.user }}"
-    comment: Go CD User
-    group: "{{ gocd_server.group }}"
-    home: "{{ gocd_server.user_dir }}"
-
 - name: Install some dependencies
   become: yes
   apt:
     name: "{{ item }}"
-  with_items:
-    - git
-    - tree
+  with_items: "{{ gocd_server.packages }}"
 
 - name: add GO CD apt repository
   become: yes
@@ -40,6 +24,15 @@
     name: "go-server={{ gocd_server.version }}"
     state: present
     force: yes
+
+- name: Install AWS CLI
+  become: yes
+  pip:
+    name: "{{ item }}"
+  when: gocd_server.aws.backup_bucket
+  with_items:
+    - awscli
+    - boto
 
 - name: Add go-server to autostart
   become: yes

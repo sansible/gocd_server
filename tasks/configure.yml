@@ -3,32 +3,61 @@
 - name: Create various directories
   become: yes
   file:
-    path: "{{ gocd_server.user_dir }}/{{ item }}"
-    state: directory
-    owner: "{{ gocd_server.user }}"
     group: "{{ gocd_server.group }}"
+    owner: "{{ gocd_server.user }}"
+    path: "/home/{{ gocd_server.user }}/{{ item }}"
+    state: directory
   with_items:
     - work/go-server
+    - bin
+    - .aws
 
 - name: Ensures go-server configuration
   become: yes
   template:
-    src: defaults.j2
-    dest: /etc/default/go-server
-    owner: "{{ gocd_server.user }}"
+    dest: "{{ item.dest }}"
     group: "{{ gocd_server.group }}"
+    owner: "{{ gocd_server.user }}"
+    src: "{{ item.src }}"
+  with_items:
+    - src: defaults.j2
+      dest: /etc/default/go-server
+    - src: passwd.j2
+      dest: "/home/{{ gocd_server.user }}/passwd"
   notify:
     - restart go-server
 
-- name: Ensures go-server passwd file
+- name: Ensures go-server backup and restore scripts
   become: yes
   template:
-    src: passwd.j2
-    dest: "{{ gocd_server.user_dir }}/passwd"
-    owner: "{{ gocd_server.user }}"
+    dest: "{{ item.dest }}"
     group: "{{ gocd_server.group }}"
-    mode: 0540
-  when: gocd_server.passwd_users
+    mode: 0750
+    owner: "{{ gocd_server.user }}"
+    src: "{{ item.src }}"
+  with_items:
+    - src: aws_s3_backup.sh.j2
+      dest: "/home/{{ gocd_server.user }}/bin/aws_s3_backup.sh"
+    - src: aws_s3_restore.sh.j2
+      dest: "/home/{{ gocd_server.user }}/bin/aws_s3_restore.sh"
+  when: gocd_server.aws.backup_bucket
+  notify:
+    - restart go-server
+
+- name: Setup AWS credentials
+  become: yes
+  become_user: "{{ gocd_server.user }}"
+  template:
+    dest: "/home/go/.aws/credentials"
+    mode: 0600
+    src: aws_credentials.j2
+  when: gocd_server.aws.access_key_id
+
+- name: Restore config from AWS
+  become: yes
+  become_user: "{{ gocd_server.user }}"
+  command: "/home/{{ gocd_server.user }}/bin/aws_s3_restore.sh"
+  when: gocd_server.aws.backup_bucket
 
 - name: Ensure gocd server is running
   become: yes
