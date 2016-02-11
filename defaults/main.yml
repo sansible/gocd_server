@@ -1,6 +1,8 @@
 ---
 
 gocd_server:
+  backup_passwd: backup
+  backup_user: backup
   group: go
   java_home: /usr/lib/jvm/java-7-oracle/jre
   port_ssl: 8154
@@ -9,11 +11,22 @@ gocd_server:
   server_max_perm_gen: 128m
   server_mem: 256m
   server_min_perm_gen: 128m
-  user_dir: /home/go
   user: go
-  version: "15.3.*"
+  version: "16.1.*"
+
+  packages:
+    - git
+    - tree
+    - python-pip
+
+  aws:
+    # backup_bucket: s3://backup.gocd_server.my.domain
+    backup_bucket: ~
+    access_key_id: ~
+    secret_access_key: ~
 
   dependencies:
     skip_java: no
 
-  passwd_users: { }
+  passwd_users:
+    backup: "{SHA}iRIdyZx9uc4lU6CToqsp4H99808="

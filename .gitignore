@@ -1,3 +1,4 @@
 .vagrant
-/tests/vagrant/ansible-city.*
+/tests/vagrant/sansible.*
+/tests/vagrant/local_vars.yml
 *.bak

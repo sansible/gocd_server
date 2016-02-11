@@ -1,0 +1,55 @@
+#!/bin/bash
+
+function info { echo -e `date +%T` "\033[1;33m  $1\033[0m"; }
+function ok { echo -e `date +%T` "\033[1;32m  $1\033[0m"; }
+function error { echo -e `date +%T` "\033[1;31m  Error: $1\033[0m"; }
+function die { error "$1"; exit 1; }
+
+BACKUP_BUCKET="{{ gocd_server.aws.backup_bucket }}"
+BACKUP_CREDS="{{ gocd_server.backup_user }}:{{ gocd_server.backup_passwd }}"
+ARTIFACTS_DIR="/home/${GO_USER}/work/go-server/artifacts/pipelines"
+SERVER="http://localhost:{{ gocd_server.port }}"
+: ${AWS_DEFAULT_REGION:=eu-west-1}
+
+export AWS_DEFAULT_REGION
+
+info "Starting backup"
+response=`curl -f \
+	-sS \
+	-H 'Accept: application/vnd.go.cd.v1+json' \
+	-X POST \
+	${SERVER}/go/api/backups`
+if [ $? -ne 0 ]; then
+	die "Backup error"
+else
+	ok "Backup finished!"
+fi
+
+backup_path=`echo ${response} | python -c"import sys,json;j=json.loads(sys.stdin.read());print j['path']"`
+backup_folder=`basename "${backup_path}"`
+backup_dir=`dirname "${backup_path}"`
+
+info "Preparing ${backup_dir}/${backup_folder}.tar.gz";
+tar -cz \
+	-f "${backup_dir}/${backup_folder}.tar.gz" \
+	--remove-files \
+	${backup_dir}/${backup_folder} \
+&& ok "ok" || die "tar error"
+
+info "Uploading ${backup_folder}.tar.gz"
+aws s3 mv \
+	"${backup_dir}/${backup_folder}.tar.gz" \
+	"${BACKUP_BUCKET}/config/" \
+&& ok "UPLOADED!" || die "Failed"
+
+info "Uploading latest.tar.gz"
+aws s3 cp \
+	"${BACKUP_BUCKET}/config/${backup_folder}.tar.gz" \
+	"${BACKUP_BUCKET}/config/latest.tar.gz" \
+&& ok "UPLOADED!" || die "Failed"
+
+info "Synchronising artifacts"
+aws s3 sync \
+	"${ARTIFACTS_DIR}" \
+	"${BACKUP_BUCKET}/pipelines" \
+&& ok "Pipelines artifacts synchronised" || die "Failed to synchronise artifacts"

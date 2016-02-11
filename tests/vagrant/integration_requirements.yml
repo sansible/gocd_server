@@ -1,4 +1,4 @@
 ---
 
-- name: ansible-city.gocd_server
+- src: sansible.gocd_server
   version: v1.0

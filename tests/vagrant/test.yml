@@ -13,4 +13,4 @@
         - build
 
   roles:
-    - name: ansible-city.gocd_server
+    - role: sansible.gocd_server
