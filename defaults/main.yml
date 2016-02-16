@@ -25,6 +25,18 @@ gocd_server:
     access_key_id: ~
     secret_access_key: ~
 
+    # List of files that need to be copied and secured from S3
+    # These should be things like SSH keys, vault passes etc.
+    # eg.
+    # s3_secret_files:
+    #  - s3_path: s3://ansible-vars/gocd/mgt-prd/id_rsa
+    #    local_path: "/home/go/.ssh"
+    #    mode: 0600
+    #  - s3_path: s3://ansible-vars/gocd/mgt-prd/id_rsa.pub
+    #    local_path: "/home/go/.ssh"
+    #    mode: 0600
+    s3_secret_files: [ ]
+
   dependencies:
     skip_java: no
 
