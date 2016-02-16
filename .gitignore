@@ -1,4 +1,5 @@
 .vagrant
+/meta/.galaxy_install_info
 /tests/vagrant/sansible.*
 /tests/vagrant/local_vars.yml
 *.bak

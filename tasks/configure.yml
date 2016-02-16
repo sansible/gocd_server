@@ -1,5 +1,11 @@
 ---
 
+- name: Ensure hostname is resolvable
+  become: yes
+  lineinfile:
+    dest: /etc/hosts
+    line: "127.0.0.1 {{ ansible_hostname }}"
+
 - name: Create various directories
   become: yes
   file:
@@ -11,6 +17,23 @@
     - work/go-server
     - bin
     - .aws
+
+- name: Copy secrets from S3
+  become: yes
+  become_user: "{{ gocd_server.user }}"
+  shell: "aws s3 cp {{ item.s3_path }} {{ item.local_path }}"
+  args:
+    creates: "{{ item.local_path }}"
+  with_items: gocd_server.aws.s3_secret_files
+
+- name: Secure secrets from S3
+  become: yes
+  file:
+    group: "{{ gocd_server.user }}"
+    mode: "{{ item.mode | default(0600) }}"
+    owner: "{{ gocd_server.user }}"
+    path: "{{ item.local_path }}"
+  with_items: gocd_server.aws.s3_secret_files
 
 - name: Ensures go-server configuration
   become: yes

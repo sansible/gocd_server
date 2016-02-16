@@ -29,7 +29,7 @@ aws s3 cp \
 mkdir -p "${TMP_RESTORE}"
 tar -xz \
 	-f /tmp/latest.tar.gz \
-	--strip-components=7 \
+	--strip-components=1 \
 	-C "${TMP_RESTORE}"/
 
 info "Stopping Go Server"
@@ -51,6 +51,7 @@ rm -rf /etc/go/* \
 	|| die "Can not delete /etc/go/*"
 cp ${TMP_RESTORE}/go/* /etc/go/ \
 	|| die "Can not move config to /etc/go/"
+chown -R ${GO_USER}:${GO_USER} /etc/go
 
 info "Restoring Repos"
 mkdir -p "${TMP_RESTORE}/config.git" \
