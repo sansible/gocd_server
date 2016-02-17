@@ -5,6 +5,7 @@ function ok { echo -e `date +%T` "\033[1;32m  $1\033[0m"; }
 function error { echo -e `date +%T` "\033[1;31m  Error: $1\033[0m"; }
 function die { error "$1"; exit 1; }
 
+GO_USER="{{ gocd_server.user }}"
 BACKUP_BUCKET="{{ gocd_server.aws.backup_bucket }}"
 BACKUP_CREDS="{{ gocd_server.backup_user }}:{{ gocd_server.backup_passwd }}"
 ARTIFACTS_DIR="/home/${GO_USER}/work/go-server/artifacts/pipelines"
@@ -16,6 +17,7 @@ export AWS_DEFAULT_REGION
 info "Starting backup"
 response=`curl -f \
 	-sS \
+	-u ${BACKUP_CREDS} \ 
 	-H 'Accept: application/vnd.go.cd.v1+json' \
 	-X POST \
 	${SERVER}/go/api/backups`
