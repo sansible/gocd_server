@@ -21,7 +21,7 @@
 - name: Copy secrets from S3
   become: yes
   become_user: "{{ gocd_server.user }}"
-  shell: "aws s3 cp {{ item.s3_path }} {{ item.local_path }}"
+  shell: "aws s3 cp --region {{ gocd_server.aws.region }} {{ item.s3_path }} {{ item.local_path }}"
   args:
     creates: "{{ item.local_path }}"
   with_items: gocd_server.aws.s3_secret_files
@@ -34,6 +34,15 @@
     owner: "{{ gocd_server.user }}"
     path: "{{ item.local_path }}"
   with_items: gocd_server.aws.s3_secret_files
+
+- name: Configure SSH
+  become: yes
+  copy:
+    src: ssh_config
+    dest: "/home/{{ gocd_server.user }}/.ssh/config"
+    group: "{{ gocd_server.group }}"
+    owner: "{{ gocd_server.user }}"
+    mode: "0600"
 
 - name: Ensures go-server configuration
   become: yes
@@ -79,7 +88,9 @@
 - name: Restore config from AWS
   become: yes
   become_user: "{{ gocd_server.user }}"
-  command: "/home/{{ gocd_server.user }}/bin/aws_s3_restore.sh"
+  command: "./bin/aws_s3_restore.sh"
+  args:
+    chdir: "/home/{{ gocd_server.user }}"
   when: gocd_server.aws.backup_bucket
 
 - name: Ensure gocd server is running

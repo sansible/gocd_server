@@ -21,8 +21,9 @@ gocd_server:
 
   aws:
     # backup_bucket: s3://backup.gocd_server.my.domain
-    backup_bucket: ~
     access_key_id: ~
+    backup_bucket: ~
+    region: eu-west-1
     secret_access_key: ~
 
     # List of files that need to be copied and secured from S3
