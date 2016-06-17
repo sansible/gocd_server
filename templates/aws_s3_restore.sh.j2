@@ -14,6 +14,15 @@ TMP_RESTORE=`mktemp -d /tmp/go-server-restore.XXXXXXX`
 
 export AWS_DEFAULT_REGION
 
+info "Checking backups exist"
+
+BACKUP_CHECK=$( aws s3 ls ${BACKUP_BUCKET}/config | wc -l )
+
+if [[ ${BACKUP_CHECK} -eq 0 ]]; then
+        info "No backups found, skipping"
+        exit 0
+fi
+
 info "Synchronising artifacts"
 aws s3 sync \
 	"${BACKUP_BUCKET}/pipelines" \
