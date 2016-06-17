@@ -4,19 +4,8 @@
   become: yes
   lineinfile:
     dest: /etc/hosts
-    line: "127.0.0.1 {{ ansible_hostname }}"
-
-- name: Create various directories
-  become: yes
-  file:
-    group: "{{ gocd_server.group }}"
-    owner: "{{ gocd_server.user }}"
-    path: "/home/{{ gocd_server.user }}/{{ item }}"
-    state: directory
-  with_items:
-    - work/go-server
-    - bin
-    - .aws
+    line: "127.0.0.1 localhost {{ ansible_hostname }}"
+    regexp: ^127\.0\.0\.1
 
 - name: Copy secrets from S3
   become: yes
@@ -42,7 +31,16 @@
     dest: "/home/{{ gocd_server.user }}/.ssh/config"
     group: "{{ gocd_server.group }}"
     owner: "{{ gocd_server.user }}"
-    mode: "0600"
+    mode: 0600
+
+- name: Configure SSH agent setup in bash profile
+  become: yes
+  template:
+    src: .bashrc.j2
+    dest: "/home/{{ gocd_server.user }}/.bashrc"
+    group: "{{ gocd_server.user }}"
+    owner: "{{ gocd_server.user }}"
+    mode: 0644
 
 - name: Ensures go-server configuration
   become: yes
@@ -76,11 +74,20 @@
   notify:
     - restart go-server
 
+- name: Ensures go-server backup cron job
+  become: yes
+  cron:
+    hour: 9,12,15,18
+    job: "/home/{{ gocd_server.user }}/bin/aws_s3_backup.sh"
+    name: Backup go-server
+    minute: 0
+    weekday: 1-7
+
 - name: Setup AWS credentials
   become: yes
   become_user: "{{ gocd_server.user }}"
   template:
-    dest: "/home/go/.aws/credentials"
+    dest: "/home/{{ gocd_server.user }}/.aws/credentials"
     mode: 0600
     src: aws_credentials.j2
   when: gocd_server.aws.access_key_id
@@ -88,7 +95,7 @@
 - name: Restore config from AWS
   become: yes
   become_user: "{{ gocd_server.user }}"
-  command: "./bin/aws_s3_restore.sh"
+  command: "/home/{{ gocd_server.user }}/bin/aws_s3_restore.sh"
   args:
     chdir: "/home/{{ gocd_server.user }}"
   when: gocd_server.aws.backup_bucket

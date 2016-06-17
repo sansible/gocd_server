@@ -17,7 +17,7 @@ export AWS_DEFAULT_REGION
 info "Starting backup"
 response=`curl -f \
 	-sS \
-	-u ${BACKUP_CREDS} \ 
+	-u ${BACKUP_CREDS} \
 	-H 'Accept: application/vnd.go.cd.v1+json' \
 	-X POST \
 	${SERVER}/go/api/backups`

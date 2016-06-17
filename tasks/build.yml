@@ -4,7 +4,8 @@
   become: yes
   lineinfile:
     dest: /etc/hosts
-    line: "127.0.0.1 {{ ansible_hostname }}"
+    line: "127.0.0.1 localhost {{ ansible_hostname }}"
+    regexp: ^127\.0\.0\.1
 
 - name: Install some dependencies
   become: yes
@@ -33,6 +34,18 @@
   with_items:
     - awscli
     - boto
+
+- name: Create various directories
+  become: yes
+  file:
+    group: "{{ gocd_server.group }}"
+    owner: "{{ gocd_server.user }}"
+    path: "/home/{{ gocd_server.user }}/{{ item }}"
+    state: directory
+  with_items:
+    - work/go-server
+    - bin
+    - .aws
 
 - name: Add go-server to autostart
   become: yes

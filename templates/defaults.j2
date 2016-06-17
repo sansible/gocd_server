@@ -10,14 +10,3 @@ export SERVER_MAX_PERM_GEN="{{ gocd_server.server_max_perm_gen }}"
 export SERVER_MIN_PERM_GEN="{{ gocd_server.server_min_perm_gen }}"
 DAEMON=Y
 VNC=N
-
-##
-# ensures ssh-agent is running
-#
-if [[ $USER == "{{ gocd_server.user }}" ]];
-then
-	if [ -z "$SSH_AUTH_SOCK" ]; then
-		eval `ssh-agent -s`
-		ssh-add
-	fi
-fi
