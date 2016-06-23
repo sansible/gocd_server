@@ -23,6 +23,7 @@ gocd_server:
     # backup_bucket: s3://backup.gocd_server.my.domain
     access_key_id: ~
     backup_bucket: ~
+    install_cli: yes
     region: eu-west-1
     secret_access_key: ~
 

@@ -35,6 +35,9 @@ This role has a "java" dependency. You can let this role install Oracle
 Java 7, or install it yourself and set `gocd_server.dependencies.skip_java`
 to `yes`.
 
+AWS CLI tools are also installed by default, you can turn this feature off 
+by setting `gocd_server.aws.install_cli` to `no`.
+
 To install this role run `ansible-galaxy install sansible.gocd_server`
 or add this to your `roles.yml`
 
