@@ -12,6 +12,15 @@
   apt:
     name: "{{ item }}"
   with_items: "{{ gocd_server.packages }}"
+  
+- name: Install AWS CLI
+  become: yes
+  pip:
+    name: "{{ item }}"
+  when: gocd_server.aws.install_cli
+  with_items:
+    - awscli
+    - boto
 
 - name: add GO CD apt repository
   become: yes
@@ -25,15 +34,6 @@
     name: "go-server={{ gocd_server.version }}"
     state: present
     force: yes
-
-- name: Install AWS CLI
-  become: yes
-  pip:
-    name: "{{ item }}"
-  when: gocd_server.aws.backup_bucket
-  with_items:
-    - awscli
-    - boto
 
 - name: Create various directories
   become: yes
