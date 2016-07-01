@@ -78,7 +78,7 @@
   become: yes
   cron:
     hour: 9,12,15,18
-    job: "/home/{{ gocd_server.user }}/bin/aws_s3_backup.sh"
+    job: "PATH=$PATH /home/{{ gocd_server.user }}/bin/aws_s3_backup.sh > /var/log/go-server/aws_s3_backup.log 2>&1"
     name: Backup go-server
     minute: 0
     weekday: 1-7
