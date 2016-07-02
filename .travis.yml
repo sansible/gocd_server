@@ -21,13 +21,11 @@ before_install:
 
 install:
   # Install Ansible.
-  - pip install ansible==${ANSIBLE_INSTALL_VERSION}
+  - pip install ansible==${ANSIBLE_INSTALL_VERSION}  ansible-lint
 
 script:
-  # Install Role Dependencies
-  - make test_deps
-  # Check the role/playbook's syntax.
-  - ansible-playbook --syntax-check --list-tasks -i tests/vagrant/inventory tests/vagrant/test.yml
+  # Install Role Dependencies and lint
+  - make test_deps lint 
   # First run
   - cd tests/vagrant/
   # Test the "build" stage

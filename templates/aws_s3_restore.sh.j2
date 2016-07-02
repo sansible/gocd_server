@@ -24,6 +24,7 @@ if [[ ${BACKUP_CHECK} -eq 0 ]]; then
 fi
 
 info "Synchronising artifacts"
+mkdir -p "${ARTIFACTS_DIR}"
 aws s3 sync \
 	"${BACKUP_BUCKET}/pipelines" \
 	"${ARTIFACTS_DIR}" \
