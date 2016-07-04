@@ -2,6 +2,7 @@
 
 export GO_SERVER_PORT={{ gocd_server.port }}
 export GO_SERVER_SSL_PORT={{ gocd_server.port_ssl }}
+export GO_SERVER_SYSTEM_PROPERTIES="{{ gocd_server.start_opts }}"
 export JAVA_HOME={{ gocd_server.java_home }}
 export SERVER_WORK_DIR=/home/{{ gocd_server.user }}/work/go-server
 export SERVER_MEM="{{ gocd_server.server_mem }}"

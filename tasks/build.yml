@@ -12,7 +12,7 @@
   apt:
     name: "{{ item }}"
   with_items: "{{ gocd_server.packages }}"
-  
+
 - name: Install AWS CLI
   become: yes
   pip:
