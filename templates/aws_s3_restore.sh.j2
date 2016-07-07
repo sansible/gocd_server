@@ -1,82 +1,100 @@
 #!/bin/bash
+set -o nounset
+set -o errexit
 
-function info { echo -e `date +%T` "\033[1;33m  $1\033[0m"; }
-function ok { echo -e `date +%T` "\033[1;32m  $1\033[0m"; }
-function error { echo -e `date +%T` "\033[1;31m  Error: $1\033[0m"; }
+function info { echo -e "$( date +%T )" "\033[1;33m  $1\033[0m"; }
+function ok { echo -e "$( date +%T )" "\033[1;32m  $1\033[0m"; }
+function error { echo -e "$( date +%T )" "\033[1;31m  Error: $1\033[0m"; }
 function die { error "$1"; exit 1; }
 
-GO_USER="{{ gocd_server.user }}"
-BACKUP_BUCKET="{{ gocd_server.aws.backup_bucket }}"
-GO_DB_PATH="/home/${GO_USER}/work/go-server/db"
-ARTIFACTS_DIR="/home/${GO_USER}/work/go-server/artifacts/pipelines"
-TMP_RESTORE=`mktemp -d /tmp/go-server-restore.XXXXXXX`
-: ${AWS_DEFAULT_REGION:=eu-west-1}
+function main {
+	GO_USER="{{ gocd_server.user }}"
+	BACKUP_BUCKET="{{ gocd_server.aws.backup_bucket }}"
+	GO_DB_PATH="/home/${GO_USER}/work/go-server/db"
+	ARTIFACTS_DIR="/home/${GO_USER}/work/go-server/artifacts/pipelines"
+	TMP_RESTORE="$( mktemp -d /tmp/go-server-restore.XXXXXXX )"
+	: "${AWS_DEFAULT_REGION:=eu-west-1}"
 
-export AWS_DEFAULT_REGION
+	export AWS_DEFAULT_REGION
 
-info "Checking backups exist"
+	info "Checking backups exist"
 
-BACKUP_CHECK=$( aws s3 ls ${BACKUP_BUCKET}/config | wc -l )
+	BACKUP_CHECK="$( aws s3 ls "${BACKUP_BUCKET}"/config | wc -l )"
 
-if [[ ${BACKUP_CHECK} -eq 0 ]]; then
-        info "No backups found, skipping"
-        exit 0
-fi
+	if [[ ${BACKUP_CHECK} -eq 0 ]]; then
+		info "No backups found, skipping"
+		exit 0
+	fi
 
-info "Synchronising artifacts"
-mkdir -p "${ARTIFACTS_DIR}"
-aws s3 sync \
-	"${BACKUP_BUCKET}/pipelines" \
-	"${ARTIFACTS_DIR}" \
-&& ok "Pipelines artifacts synchronised" || die "Failed to synchronise artifacts"
+	info "Stopping Go Server"
+	service go-server stop
 
-info "Downloading latest.tar.gz"
-aws s3 cp \
-	"${BACKUP_BUCKET}/config/latest.tar.gz" \
-	"/tmp/latest.tar.gz" \
-&& ok "Downloaded /tmp/latest.tar.gz" || die "Failed to download ${BACKUP_BUCKET}/config/latest.tar.gz"
+	info "Downloading latest.tar.gz"
+	aws s3 cp \
+		"${BACKUP_BUCKET}"/config/latest.tar.gz \
+		"/tmp/latest.tar.gz" \
+		|| die "Failed to download ${BACKUP_BUCKET}/config/latest.tar.gz"
+	ok "Downloaded /tmp/latest.tar.gz"
 
-mkdir -p "${TMP_RESTORE}"
-tar -xz \
-	-f /tmp/latest.tar.gz \
-	--strip-components=1 \
-	-C "${TMP_RESTORE}"/
+	mkdir -p "${TMP_RESTORE}"
+	tar -xz \
+		-f /tmp/latest.tar.gz \
+		--strip-components=1 \
+		-C "${TMP_RESTORE}"/
 
-info "Stopping Go Server"
-service go-server stop
+	info "Restoring DB"
+	rm -rf "${GO_DB_PATH}"/h2db \
+		|| die "Can not delete ${GO_DB_PATH}/h2db"
+	mkdir -p "${GO_DB_PATH}/h2db" \
+		|| die "Can not mkdir ${GO_DB_PATH}/h2db"
+	cd "${TMP_RESTORE}"
+	unzip -q db.zip \
+		|| die "can not unzip db.zip"
+	cp "${TMP_RESTORE}"/cruise.h2.db "${GO_DB_PATH}"/h2db/ \
+		|| die "can not copy cruise.h2.db"
+	chown -R "${GO_USER}":"${GO_USER}" "${GO_DB_PATH}"/h2db
+	ok "DB restored"
 
-info "Restoring DB"
-cd "${TMP_RESTORE}" && unzip -q db.zip
-rm -rf ${GO_DB_PATH}/h2db
-mkdir ${GO_DB_PATH}/h2db
-cp "${TMP_RESTORE}/cruise.h2.db" ${GO_DB_PATH}/h2db/
-chown -R ${GO_USER}:${GO_USER} ${GO_DB_PATH}/h2db
+	info "Restoring Config"
+	mkdir -p "${TMP_RESTORE}"/go \
+		|| die "Can not create dir ${TMP_RESTORE}/go"
+	cd "${TMP_RESTORE}"/go
+	unzip -q ../config-dir.zip \
+		|| die "Can not unzip config-dir.zip"
+	rm -rf /etc/go/* \
+		|| die "Can not delete /etc/go/*"
+	cp -R "${TMP_RESTORE}"/go/* /etc/go/ \
+		|| die "Can not copy config to /etc/go/"
+	chown -R "${GO_USER}":"${GO_USER}" /etc/go
+	ok "Config restored"
 
-info "Restoring Config"
-mkdir -p "${TMP_RESTORE}/go" \
-	|| die "Can not create dir ${TMP_RESTORE}/go"
-cd "${TMP_RESTORE}/go" && unzip -q ../config-dir.zip \
-	|| die "Can not unzip config-dir.zip"
-rm -rf /etc/go/* \
-	|| die "Can not delete /etc/go/*"
-cp ${TMP_RESTORE}/go/* /etc/go/ \
-	|| die "Can not move config to /etc/go/"
-chown -R ${GO_USER}:${GO_USER} /etc/go
+	info "Restoring Repos"
+	mkdir -p "${TMP_RESTORE}"/config.git \
+		|| die "Can not mkdir ${TMP_RESTORE}/config.git"
+	cd "${TMP_RESTORE}"/config.git
+	unzip -q ../config-repo.zip \
+		|| die "can not unzip config-repo.zip"
+	rm -rf "${GO_DB_PATH}"/config.git \
+		|| die "Can not delete ${GO_DB_PATH}/config.git"
+	mv "${TMP_RESTORE}"/config.git "${GO_DB_PATH}/" \
+		|| die "can not move config.git"
+	chown -R "${GO_USER}":"${GO_USER}" "${GO_DB_PATH}"/config.git
+	ok "Repos restored"
 
-info "Restoring Repos"
-mkdir -p "${TMP_RESTORE}/config.git" \
-	|| die "Can not mkdir ${TMP_RESTORE}/config.git"
-cd "${TMP_RESTORE}/config.git" && unzip -q ../config-repo.zip \
-   || die "can not unzip config-repo.zip"
-rm -rf ${GO_DB_PATH}/config.git \
-   || die "Can not delete ${GO_DB_PATH}/config.git"
-mv ${TMP_RESTORE}/config.git ${GO_DB_PATH}/ \
-   || die "can not move config.git"
-chown -R ${GO_USER}:${GO_USER} ${GO_DB_PATH}/config.git
+	info "Deleting restore folder ${TMP_RESTORE}"
+	rm -rf "${TMP_RESTORE}"
+	rm -f /tmp/latest.tar.gz
 
-info "Deleting restore folder ${TMP_RESTORE}"
-rm -rf "${TMP_RESTORE}"
-rm -f /tmp/latest.tar.gz
+	info "Synchronising artifacts"
+	mkdir -p "${ARTIFACTS_DIR}"
+	aws s3 sync \
+		"${BACKUP_BUCKET}"/pipelines \
+		"${ARTIFACTS_DIR}" \
+		 || die "Failed to synchronise artifacts"
+	ok "Pipelines artifacts synchronised"
 
-info "Starting Go Server"
-service go-server start
+	info "Starting Go Server"
+	service go-server start
+}
+
+main "$@"
