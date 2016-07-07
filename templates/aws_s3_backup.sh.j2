@@ -2,6 +2,8 @@
 set -o nounset
 set -o errexit
 
+export PATH=$PATH:/usr/sbin:/sbin:/usr/bin:/bin:/usr/local/bin/
+
 function info { echo -e "$( date +%T )" "\033[1;33m  $1\033[0m"; }
 function ok { echo -e "$( date +%T )" "\033[1;32m  $1\033[0m"; }
 function error { echo -e "$( date +%T )" "\033[1;31m  Error: $1\033[0m"; }
