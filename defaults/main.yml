@@ -13,12 +13,12 @@ gocd_server:
   server_min_perm_gen: 128m
   start_opts: ""
   user: go
-  version: "16.1.*"
+  version: 16.1.*
 
   packages:
     - git
-    - tree
     - python-pip
+    - tree
 
   aws:
     # backup_bucket: s3://backup.gocd_server.my.domain
@@ -45,3 +45,7 @@ gocd_server:
 
   passwd_users:
     backup: "{SHA}iRIdyZx9uc4lU6CToqsp4H99808="
+
+  repo:
+    key_id: 8816C449
+    source: deb https://download.go.cd /
