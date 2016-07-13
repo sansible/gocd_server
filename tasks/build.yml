@@ -22,11 +22,19 @@
     - awscli
     - boto
 
-- name: add GO CD apt repository
+- name: Add GoCD Apt key
+  become: yes
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: "{{ gocd_server.repo.key_id }}"
+    state: present
+
+- name: Install GoCD repo
   become: yes
   apt_repository:
-    repo: deb http://dl.bintray.com/gocd/gocd-deb/ /
+    repo: "{{ gocd_server.repo.source }}"
     state: present
+    update_cache: yes
 
 - name: Install go-server
   become: yes
