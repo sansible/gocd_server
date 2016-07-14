@@ -19,6 +19,10 @@ gocd_server:
     - git
     - python-pip
     - tree
+    - unzip
+
+  # Should be a list of jar urls to download
+  plugins: [ ]
 
   aws:
     # backup_bucket: s3://backup.gocd_server.my.domain

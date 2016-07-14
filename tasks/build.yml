@@ -52,6 +52,7 @@
     state: directory
   with_items:
     - work/go-server
+    - work/go-server/plugins/external
     - bin
     - .aws
 
@@ -61,3 +62,11 @@
     name: go-server
     enabled: yes
     state: stopped
+
+- name: Install go-server plugins
+  become: yes
+  become_user: "{{ gocd_server.user }}"
+  get_url:
+    dest: /home/{{ gocd_server.user }}/work/go-server/plugins/external
+    url:  "{{ item }}"
+  with_items: "{{ gocd_server.plugins }}"
