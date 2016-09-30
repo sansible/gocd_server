@@ -1,7 +1,7 @@
 ---
 
 - src: sansible.java
-  version: v1.0
+  version: v1.0.3
 
 - src: sansible.users_and_groups
-  version: v1.0
+  version: v1.2.1

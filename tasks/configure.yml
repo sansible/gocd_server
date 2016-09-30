@@ -13,7 +13,7 @@
   shell: "aws s3 cp --region {{ gocd_server.aws.region }} {{ item.s3_path }} {{ item.local_path }}"
   args:
     creates: "{{ item.local_path }}"
-  with_items: gocd_server.aws.s3_secret_files
+  with_items: "{{ gocd_server.aws.s3_secret_files }}"
 
 - name: Secure secrets from S3
   become: yes
@@ -22,7 +22,7 @@
     mode: "{{ item.mode | default(0600) }}"
     owner: "{{ gocd_server.user }}"
     path: "{{ item.local_path }}"
-  with_items: gocd_server.aws.s3_secret_files
+  with_items: "{{ gocd_server.aws.s3_secret_files }}"
 
 - name: Configure SSH
   become: yes
