@@ -28,7 +28,7 @@ script:
   # Install Role Dependencies and lint
   - make test_deps lint 
   # First run
-  - cd tests/vagrant/
+  - cd tests/
   # Test the "build" stage
   - ansible-playbook -i inventory test.yml --tags=build --connection=local
   - >
@@ -43,6 +43,8 @@ script:
     | grep -q 'changed=0.*failed=0'
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
+  # Test the "assert" stage
+  - ansible-playbook -i inventory test.yml --tags=assert --connection=local
     
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

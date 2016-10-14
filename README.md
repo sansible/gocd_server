@@ -1,5 +1,8 @@
 # GO CD Server
 
+Please see the Sansible readme for information on how to 
+[contribure](https://github.com/sansible/sansible)
+
 Master: [![Build Status](https://travis-ci.org/sansible/gocd_server.svg?branch=master)](https://travis-ci.org/sansible/gocd_server)  
 Develop: [![Build Status](https://travis-ci.org/sansible/gocd_server.svg?branch=develop)](https://travis-ci.org/sansible/gocd_server)
 
@@ -9,7 +12,8 @@ Develop: [![Build Status](https://travis-ci.org/sansible/gocd_server.svg?branch=
 * [Examples](#examples)
 * [Development & Testing](#development---testing)
 
-This roles installs GO CD server.
+This roles installs GO CD server, for GO CD Agent installation please 
+see the [Sansible GO CD Agent Role](https://github.com/sansible/gocd_agent)
 
 For more information about GO CD please visit [go.cd/](http://www.go.cd/).
 
@@ -179,20 +183,25 @@ create ~/.aws/credentials for you. But we strongly advise to use
 
 ## Development & Testing
 
-If you want to work on this role, please start with running
-`make watch`. This will watch for any file changes and re-provision
-vagrant box.
+If you want to work on this role you will find several test targets 
+in the Makfefile.
 
-If you want to test the AWS backup/restore script locally you need
-to create a file `/tests/vagrant/local_vars.yml` with
+`make test` - This will bring up the Vagrant machine and run a test
+at the end  
+`make watch` - This will watch for file system changes and 
+reprovision the Vagrant machine.
 
-```YAML
----
+You will need to have ansible-lint installed to run the tests:
 
-gocd_server:
-  aws:
-    backup_bucket: s3://backup.gocd-server.my.domain
-    access_key_id: LOREMIPSUMDOLORKV4IQ
-    secret_access_key: sit+Ament+Hl8V2lQpaOkLRakvGMidrkWv6F9
+```BASH
+pip install ansible-lint
+```
 
+By default the tests will bring an Ubuntu Trust64 machine, you can make them
+bring up a Xenial 64 machine by adding ```UBUNTU_VERSION=16``` before 
+these make commands, eg:
+
+```BASH
+UBUNTU_VERSION=16 make test
+UBUNTU_VERSION=16 make watch
 ```

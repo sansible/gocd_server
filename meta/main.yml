@@ -10,13 +10,14 @@ galaxy_info:
       versions:
         - precise
         - trusty
+        - xenial
   categories:
     - development
     - cd
 
 dependencies:
   - role: sansible.users_and_groups
-    version: v1.0
+    version: v1.2
     users_and_groups:
       users:
         - name: "{{ gocd_server.user }}"

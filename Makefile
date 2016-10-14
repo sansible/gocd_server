@@ -4,23 +4,21 @@
 
 all: test vagrant_halt clean
 
-all: test clean
-
 ## Run tests on any file change
 watch: test_deps
 	while sleep 1; do \
-		find defaults/ handlers/ meta/ tasks/ templates/ tests/vagrant/test.yml \
-		| entr -d make test; \
+		find defaults/ meta/ tasks/ templates/ tests/test.yml tests/vagrant/Vagrantfile \
+		| entr -d make lint vagrant; \
 	done
 
 ## Run tests
-test: test_deps vagrant_up
+test: test_deps lint vagrant
 
 ## Install test dependencies
 test_deps:
-	rm -rf tests/vagrant/sansible.gocd_server
-	ln -s ../.. tests/vagrant/sansible.gocd_server
-	ansible-galaxy install --force -p tests/vagrant -r tests/vagrant/local_requirements.yml
+	rm -rf tests/sansible.*
+	ln -s .. tests/sansible.gocd_server
+	ansible-galaxy install --force -p tests/ -r tests/local_requirements.yml
 
 ## Start and (re)provisiom Vagrant test box
 vagrant:
@@ -40,7 +38,7 @@ lint:
 
 ## Clean up
 clean:
-	rm -rf tests/vagrant/sansible.*
+	rm -rf tests/sansible.*
 	cd tests/vagrant && vagrant destroy
 
 ## Prints this help
