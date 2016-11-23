@@ -70,6 +70,8 @@
       dest: "/home/{{ gocd_server.user }}/bin/aws_s3_backup.sh"
     - src: aws_s3_restore.sh.j2
       dest: "/home/{{ gocd_server.user }}/bin/aws_s3_restore.sh"
+    - src: aws_s3_restore_artifacts.sh.j2
+      dest: "/home/{{ gocd_server.user }}/bin/aws_s3_restore_artifacts.sh"
   when: gocd_server.aws.backup_bucket
   notify:
     - restart go-server
