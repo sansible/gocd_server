@@ -87,6 +87,8 @@ function main {
 	rm -rf "${TMP_RESTORE}"
 	rm -f /tmp/latest.tar.gz
 
+
+{% if gocd_server.restore_artifacts_on_boot %}
 	info "Synchronising artifacts"
 	mkdir -p "${ARTIFACTS_DIR}"
 	aws s3 sync \
@@ -94,6 +96,7 @@ function main {
 		"${ARTIFACTS_DIR}" \
 		 || die "Failed to synchronise artifacts"
 	ok "Pipelines artifacts synchronised"
+{% endif %}
 
 	info "Starting Go Server"
 	service go-server start
