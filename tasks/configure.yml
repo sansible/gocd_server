@@ -45,17 +45,22 @@
 - name: Ensures go-server configuration
   become: yes
   template:
-    dest: "{{ item.dest }}"
+    dest: /etc/default/go-server
     group: "{{ gocd_server.group }}"
     owner: "{{ gocd_server.user }}"
-    src: "{{ item.src }}"
-  with_items:
-    - src: defaults.j2
-      dest: /etc/default/go-server
-    - src: passwd.j2
-      dest: "/home/{{ gocd_server.user }}/passwd"
+    src: defaults.j2
   notify:
     - restart go-server
+
+- name: Ensures go-server user passwords file
+  become: yes
+  template:
+    dest: "/home/{{ gocd_server.user }}/passwd"
+    group: "{{ gocd_server.group }}"
+    mode: 0600
+    owner: "{{ gocd_server.user }}"
+    src: passwd.j2
+  when: gocd_server.passwd_users | length > 0
 
 - name: Ensures go-server backup and restore scripts
   become: yes

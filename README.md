@@ -1,9 +1,9 @@
 # GO CD Server
 
-Please see the Sansible readme for information on how to 
+Please see the Sansible readme for information on how to
 [contribure](https://github.com/sansible/sansible)
 
-Master: [![Build Status](https://travis-ci.org/sansible/gocd_server.svg?branch=master)](https://travis-ci.org/sansible/gocd_server)  
+Master: [![Build Status](https://travis-ci.org/sansible/gocd_server.svg?branch=master)](https://travis-ci.org/sansible/gocd_server)
 Develop: [![Build Status](https://travis-ci.org/sansible/gocd_server.svg?branch=develop)](https://travis-ci.org/sansible/gocd_server)
 
 * [ansible.cfg](#ansible-cfg)
@@ -12,7 +12,7 @@ Develop: [![Build Status](https://travis-ci.org/sansible/gocd_server.svg?branch=
 * [Examples](#examples)
 * [Development & Testing](#development---testing)
 
-This roles installs GO CD server, for GO CD Agent installation please 
+This roles installs GO CD server, for GO CD Agent installation please
 see the [Sansible GO CD Agent Role](https://github.com/sansible/gocd_agent)
 
 For more information about GO CD please visit [go.cd/](http://www.go.cd/).
@@ -39,7 +39,7 @@ This role has a "java" dependency. You can let this role install Oracle
 Java 7, or install it yourself and set `gocd_server.dependencies.skip_java`
 to `yes`.
 
-AWS CLI tools are also installed by default, you can turn this feature off 
+AWS CLI tools are also installed by default, you can turn this feature off
 by setting `gocd_server.aws.install_cli` to `no`.
 
 To install this role run `ansible-galaxy install sansible.gocd_server`
@@ -183,12 +183,12 @@ create ~/.aws/credentials for you. But we strongly advise to use
 
 ## Development & Testing
 
-If you want to work on this role you will find several test targets 
+If you want to work on this role you will find several test targets
 in the Makfefile.
 
 `make test` - This will bring up the Vagrant machine and run a test
-at the end  
-`make watch` - This will watch for file system changes and 
+at the end
+`make watch` - This will watch for file system changes and
 reprovision the Vagrant machine.
 
 You will need to have ansible-lint installed to run the tests:
@@ -198,7 +198,7 @@ pip install ansible-lint
 ```
 
 By default the tests will bring an Ubuntu Trust64 machine, you can make them
-bring up a Xenial 64 machine by adding ```UBUNTU_VERSION=16``` before 
+bring up a Xenial 64 machine by adding ```UBUNTU_VERSION=16``` before
 these make commands, eg:
 
 ```BASH
