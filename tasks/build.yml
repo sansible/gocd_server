@@ -51,10 +51,11 @@
     path: "/home/{{ gocd_server.user }}/{{ item }}"
     state: directory
   with_items:
+    - .aws
+    - bin
     - work/go-server
     - work/go-server/plugins/external
-    - bin
-    - .aws
+    - work/go-server/artifacts/pipelines
 
 - name: Add go-server to autostart
   become: yes
