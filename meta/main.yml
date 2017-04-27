@@ -19,9 +19,14 @@ dependencies:
   - role: sansible.users_and_groups
     version: v1.2
     users_and_groups:
+      groups:
+        - name: "{{ gocd_server.group }}"
+          system: yes
       users:
         - name: "{{ gocd_server.user }}"
           gecos: Go CD user
+          group: "{{ gocd_server.group }}"
+          system: yes
     tags:
       - build
 
