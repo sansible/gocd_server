@@ -39,7 +39,7 @@
 - name: Install go-server
   become: yes
   apt:
-    name: "go-server={{ gocd_server.version }}"
+    name: "go-server={{ gocd_server.version | regex_replace('^(.*?)\\*?$', '\\1*') }}"
     state: present
     force: yes
 

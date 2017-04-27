@@ -14,7 +14,7 @@ gocd_server:
   server_min_perm_gen: 128m
   start_opts: ""
   user: go
-  version: 16.6.*
+  version: 16.*
 
   packages:
     - git
