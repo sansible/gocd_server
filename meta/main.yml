@@ -1,14 +1,16 @@
 ---
 
 galaxy_info:
-  author: "Wojtek Oledzki"
-  description: "Install the Go Continuous Delivery server."
+  author:
+    - Wojtek Oledzki
+    - David Reed
+    - Hagen Kuehn
+  description: Install the Go Continuous Delivery server.
   license: MIT
   min_ansible_version: 2.0
   platforms:
     - name: Ubuntu
       versions:
-        - precise
         - trusty
         - xenial
   categories:
@@ -17,16 +19,12 @@ galaxy_info:
 
 dependencies:
   - role: sansible.users_and_groups
-    version: v1.2
     users_and_groups:
       users:
         - name: "{{ gocd_server.user }}"
           gecos: Go CD user
-    tags:
-      - build
 
   - role: sansible.java
-    version: v1.0
-    tags:
-      - build
+    java:
+      version: "{{ gocd_server.java_version }}"
     when: not gocd_server.dependencies.skip_java
