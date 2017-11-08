@@ -4,7 +4,6 @@ gocd_server:
   backup_passwd: backup
   backup_user: backup
   group: go
-  java_home: /usr/lib/jvm/java-8-oracle/jre
   java_version: 8
   port_ssl: 8154
   port: 8153
