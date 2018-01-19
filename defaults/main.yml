@@ -53,4 +53,4 @@ gocd_server:
 
   repo:
     key_id: 8816C449
-    source: deb https://download.gocd.io /
+    source: deb https://download.gocd.org /
