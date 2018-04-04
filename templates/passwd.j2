@@ -1,6 +1,6 @@
 ##
 # {{ ansible_managed }}
 
-{% for name, passwd in gocd_server.passwd_users.items() %}
+{% for name, passwd in sansible_gocd_server_passwd_users.items() %}
 {{ name }}:{{ passwd }}
 {% endfor %}

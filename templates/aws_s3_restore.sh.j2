@@ -10,8 +10,8 @@ function error { echo -e "$( date +%T )" "\033[1;31m  Error: $1\033[0m"; }
 function die { error "$1"; exit 1; }
 
 function main {
-	GO_USER="{{ gocd_server.user }}"
-	BACKUP_BUCKET="{{ gocd_server.aws.backup_bucket }}"
+	GO_USER="{{ sansible_gocd_server_user }}"
+	BACKUP_BUCKET="{{ sansible_gocd_server_aws_backup_bucket }}"
 	GO_DB_PATH="/home/${GO_USER}/work/go-server/db"
 	ARTIFACTS_DIR="/home/${GO_USER}/work/go-server/artifacts/pipelines"
 	TMP_RESTORE="$( mktemp -d /tmp/go-server-restore.XXXXXXX )"
@@ -88,7 +88,7 @@ function main {
 	rm -f /tmp/latest.tar.gz
 
 
-{% if gocd_server.restore_artifacts_on_boot %}
+{% if sansible_gocd_server_restore_artifacts_on_boot %}
 	info "Synchronising artifacts"
 	mkdir -p "${ARTIFACTS_DIR}"
 	aws s3 sync \

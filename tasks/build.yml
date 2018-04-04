@@ -6,18 +6,20 @@
     dest: /etc/hosts
     line: "127.0.0.1 localhost {{ ansible_hostname }}"
     regexp: ^127\.0\.0\.1
+  when: ansible_virtualization_type != 'docker'
 
 - name: Install some dependencies
   become: yes
   apt:
     name: "{{ item }}"
-  with_items: "{{ gocd_server.packages }}"
+    update_cache: yes
+  with_items: "{{ sansible_gocd_server_packages }}"
 
 - name: Install AWS CLI
   become: yes
   pip:
     name: "{{ item }}"
-  when: gocd_server.aws.install_cli
+  when: sansible_gocd_server_aws_install_cli
   with_items:
     - awscli
     - boto
@@ -26,29 +28,29 @@
   become: yes
   apt_key:
     keyserver: hkp://keyserver.ubuntu.com:80
-    id: "{{ gocd_server.repo.key_id }}"
+    id: "{{ sansible_gocd_server_repo_key_id }}"
     state: present
 
 - name: Install GoCD repo
   become: yes
   apt_repository:
-    repo: "{{ gocd_server.repo.source }}"
+    repo: "{{ sansible_gocd_server_repo_source }}"
     state: present
     update_cache: yes
 
 - name: Install go-server
   become: yes
   apt:
-    name: "go-server={{ gocd_server.version | regex_replace('^(.*?)\\*?$', '\\1*') }}"
+    name: "go-server={{ sansible_gocd_server_version | regex_replace('^(.*?)\\*?$', '\\1*') }}"
     state: present
     force: yes
 
 - name: Create various directories
   become: yes
   file:
-    group: "{{ gocd_server.group }}"
-    owner: "{{ gocd_server.user }}"
-    path: "/home/{{ gocd_server.user }}/{{ item }}"
+    group: "{{ sansible_gocd_server_group }}"
+    owner: "{{ sansible_gocd_server_user }}"
+    path: "/home/{{ sansible_gocd_server_user }}/{{ item }}"
     state: directory
   with_items:
     - .aws
@@ -62,12 +64,13 @@
   service:
     name: go-server
     enabled: yes
-    state: stopped
 
 - name: Install go-server plugins
   become: yes
-  become_user: "{{ gocd_server.user }}"
+  become_user: "{{ sansible_gocd_server_user }}"
   get_url:
-    dest: /home/{{ gocd_server.user }}/work/go-server/plugins/external
-    url:  "{{ item }}"
-  with_items: "{{ gocd_server.plugins }}"
+    dest: "/home/{{ sansible_gocd_server_user }}/work/go-server/plugins/external"
+    url: "{{ item }}"
+  with_items: "{{ sansible_gocd_server_plugins }}"
+  notify:
+    - restart go-server
