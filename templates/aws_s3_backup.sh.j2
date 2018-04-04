@@ -10,11 +10,11 @@ function error { echo -e "$( date +%T )" "\033[1;31m  Error: $1\033[0m"; }
 function die { error "$1"; exit 1; }
 
 function main {
-	GO_USER="{{ gocd_server.user }}"
-	BACKUP_BUCKET="{{ gocd_server.aws.backup_bucket }}"
-	BACKUP_CREDS="{{ gocd_server.backup_user }}:{{ gocd_server.backup_passwd }}"
+	GO_USER="{{ sansible_gocd_server_user }}"
+	BACKUP_BUCKET="{{ sansible_gocd_server_aws_backup_bucket }}"
+	BACKUP_CREDS="{{ sansible_gocd_server_backup_user }}:{{ sansible_gocd_server_backup_passwd }}"
 	ARTIFACTS_DIR="/home/${GO_USER}/work/go-server/artifacts/pipelines"
-	SERVER="http://localhost:{{ gocd_server.port }}"
+	SERVER="http://localhost:{{ sansible_gocd_server_port }}"
 	: "${AWS_DEFAULT_REGION:=eu-west-1}"
 
 	export AWS_DEFAULT_REGION

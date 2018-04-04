@@ -1,30 +1,28 @@
 ---
 
 galaxy_info:
-  author:
-    - Wojtek Oledzki
-    - David Reed
-    - Hagen Kuehn
   description: Install the Go Continuous Delivery server.
   license: MIT
-  min_ansible_version: 2.0
+  min_ansible_version: 2.2
   platforms:
     - name: Ubuntu
       versions:
         - trusty
         - xenial
+        - bionic
   categories:
     - development
     - cd
 
 dependencies:
   - role: sansible.users_and_groups
-    users_and_groups:
-      users:
-        - name: "{{ gocd_server.user }}"
-          gecos: Go CD user
+    sansible_users_and_groups_groups:
+      - name: "{{ sansible_gocd_server_group }}"
+    sansible_users_and_groups_users:
+      - name: "{{ sansible_gocd_server_user }}"
+        gecos: Go CD user
+        group: "{{ sansible_gocd_server_group }}"
 
   - role: sansible.java
-    java:
-      version: "{{ gocd_server.java_version }}"
-    when: not gocd_server.dependencies.skip_java
+    sansible_java_version: "{{ sansible_gocd_server_java_version }}"
+    when: not sansible_gocd_server_dependencies_skip_java

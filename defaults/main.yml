@@ -1,56 +1,45 @@
 ---
 
-gocd_server:
-  backup_passwd: backup
-  backup_user: backup
-  group: go
-  java_version: 8
-  port_ssl: 8154
-  port: 8153
-  restore_artifacts_on_boot: true
-  server_max_mem: 512m
-  server_max_perm_gen: 128m
-  server_mem: 256m
-  server_min_perm_gen: 128m
-  start_opts: ""
-  user: go
-  version: 16.*
-
-  packages:
-    - git
-    - python-pip
-    - tree
-    - unzip
-
-  # Should be a list of jar urls to download
-  plugins: [ ]
-
-  aws:
-    # backup_bucket: s3://backup.gocd_server.my.domain
-    access_key_id: ~
-    backup_bucket: ~
-    install_cli: yes
-    region: eu-west-1
-    secret_access_key: ~
-
-    # List of files that need to be copied and secured from S3
-    # These should be things like SSH keys, vault passes etc.
-    # eg.
-    # s3_secret_files:
-    #  - s3_path: s3://ansible-vars/gocd/mgt-prd/id_rsa
-    #    local_path: "/home/go/.ssh"
-    #    mode: 0600
-    #  - s3_path: s3://ansible-vars/gocd/mgt-prd/id_rsa.pub
-    #    local_path: "/home/go/.ssh"
-    #    mode: 0600
-    s3_secret_files: [ ]
-
-  dependencies:
-    skip_java: no
-
-  passwd_users:
-    backup: "{SHA}iRIdyZx9uc4lU6CToqsp4H99808="
-
-  repo:
-    key_id: 8816C449
-    source: deb https://download.gocd.io /
+sansible_gocd_server_aws_access_key_id: ~
+sansible_gocd_server_aws_backup_bucket: ~
+sansible_gocd_server_aws_install_cli: yes
+sansible_gocd_server_aws_region: eu-west-1
+# List of files that need to be copied and secured from S3.
+# These should be things like SSH keys, vault passes etc., e.g.
+# sansible_gocd_server_aws_s3_secret_files:
+#   - s3_path: s3://ansible-vars/gocd/mgt-prd/id_rsa
+#     local_path: /home/go/.ssh
+#     mode: 0600
+#   - s3_path: s3://ansible-vars/gocd/mgt-prd/id_rsa.pub
+#     local_path: /home/go/.ssh
+#     mode: 0600
+sansible_gocd_server_aws_s3_secret_files: []
+sansible_gocd_server_aws_secret_access_key: ~
+sansible_gocd_server_backup_passwd: backup
+sansible_gocd_server_backup_user: backup
+sansible_gocd_server_dependencies_skip_java: no
+sansible_gocd_server_group: go
+sansible_gocd_server_java_version: 8
+sansible_gocd_server_max_mem: 512m
+sansible_gocd_server_max_perm_gen: 128m
+sansible_gocd_server_mem: 256m
+sansible_gocd_server_min_perm_gen: 128m
+sansible_gocd_server_packages:
+  - apt-transport-https
+  - cron
+  - git
+  - net-tools
+  - python-pip
+  - tree
+  - unzip
+sansible_gocd_server_passwd_users:
+  backup: "{SHA}iRIdyZx9uc4lU6CToqsp4H99808="
+sansible_gocd_server_plugins: []
+sansible_gocd_server_port: 8153
+sansible_gocd_server_port_ssl: 8154
+sansible_gocd_server_repo_key_id: 8816C449
+sansible_gocd_server_repo_source: deb https://download.gocd.org /
+sansible_gocd_server_restore_artifacts_on_boot: yes
+sansible_gocd_server_start_opts: ''
+sansible_gocd_server_user: go
+sansible_gocd_server_version: 16.*

@@ -6,48 +6,49 @@
     dest: /etc/hosts
     line: "127.0.0.1 localhost {{ ansible_hostname }}"
     regexp: ^127\.0\.0\.1
+  when: ansible_virtualization_type != 'docker'
 
 - name: Copy secrets from S3
   become: yes
-  become_user: "{{ gocd_server.user }}"
-  shell: "aws s3 cp --region {{ gocd_server.aws.region }} {{ item.s3_path }} {{ item.local_path }}"
+  become_user: "{{ sansible_gocd_server_user }}"
+  command: "aws s3 cp --region {{ sansible_gocd_server_aws_region }} {{ item.s3_path }} {{ item.local_path }}"
   args:
     creates: "{{ item.local_path }}"
-  with_items: "{{ gocd_server.aws.s3_secret_files }}"
+  with_items: "{{ sansible_gocd_server_aws_s3_secret_files }}"
 
 - name: Secure secrets from S3
   become: yes
   file:
-    group: "{{ gocd_server.user }}"
+    group: "{{ sansible_gocd_server_user }}"
     mode: "{{ item.mode | default(0600) }}"
-    owner: "{{ gocd_server.user }}"
+    owner: "{{ sansible_gocd_server_user }}"
     path: "{{ item.local_path }}"
-  with_items: "{{ gocd_server.aws.s3_secret_files }}"
+  with_items: "{{ sansible_gocd_server_aws_s3_secret_files }}"
 
 - name: Configure SSH
   become: yes
   copy:
     src: ssh_config
-    dest: "/home/{{ gocd_server.user }}/.ssh/config"
-    group: "{{ gocd_server.group }}"
-    owner: "{{ gocd_server.user }}"
+    dest: "/home/{{ sansible_gocd_server_user }}/.ssh/config"
+    group: "{{ sansible_gocd_server_group }}"
+    owner: "{{ sansible_gocd_server_user }}"
     mode: 0600
 
 - name: Configure SSH agent setup in bash profile
   become: yes
   template:
     src: .bashrc.j2
-    dest: "/home/{{ gocd_server.user }}/.bashrc"
-    group: "{{ gocd_server.user }}"
-    owner: "{{ gocd_server.user }}"
+    dest: "/home/{{ sansible_gocd_server_user }}/.bashrc"
+    group: "{{ sansible_gocd_server_user }}"
+    owner: "{{ sansible_gocd_server_user }}"
     mode: 0644
 
 - name: Ensures go-server configuration
   become: yes
   template:
     dest: /etc/default/go-server
-    group: "{{ gocd_server.group }}"
-    owner: "{{ gocd_server.user }}"
+    group: "{{ sansible_gocd_server_group }}"
+    owner: "{{ sansible_gocd_server_user }}"
     src: defaults.j2
   notify:
     - restart go-server
@@ -55,29 +56,29 @@
 - name: Ensures go-server user passwords file
   become: yes
   template:
-    dest: "/home/{{ gocd_server.user }}/passwd"
-    group: "{{ gocd_server.group }}"
+    dest: "/home/{{ sansible_gocd_server_user }}/passwd"
+    group: "{{ sansible_gocd_server_group }}"
     mode: 0600
-    owner: "{{ gocd_server.user }}"
+    owner: "{{ sansible_gocd_server_user }}"
     src: passwd.j2
-  when: gocd_server.passwd_users | length > 0
+  when: sansible_gocd_server_passwd_users | length > 0
 
 - name: Ensures go-server backup and restore scripts
   become: yes
   template:
     dest: "{{ item.dest }}"
-    group: "{{ gocd_server.group }}"
+    group: "{{ sansible_gocd_server_group }}"
     mode: 0750
-    owner: "{{ gocd_server.user }}"
+    owner: "{{ sansible_gocd_server_user }}"
     src: "{{ item.src }}"
   with_items:
     - src: aws_s3_backup.sh.j2
-      dest: "/home/{{ gocd_server.user }}/bin/aws_s3_backup.sh"
+      dest: "/home/{{ sansible_gocd_server_user }}/bin/aws_s3_backup.sh"
     - src: aws_s3_restore.sh.j2
-      dest: "/home/{{ gocd_server.user }}/bin/aws_s3_restore.sh"
+      dest: "/home/{{ sansible_gocd_server_user }}/bin/aws_s3_restore.sh"
     - src: aws_s3_restore_artifacts.sh.j2
-      dest: "/home/{{ gocd_server.user }}/bin/aws_s3_restore_artifacts.sh"
-  when: gocd_server.aws.backup_bucket
+      dest: "/home/{{ sansible_gocd_server_user }}/bin/aws_s3_restore_artifacts.sh"
+  when: sansible_gocd_server_aws_backup_bucket
   notify:
     - restart go-server
 
@@ -85,27 +86,27 @@
   become: yes
   cron:
     hour: 9,12,15,18
-    job: "PATH=$PATH /home/{{ gocd_server.user }}/bin/aws_s3_backup.sh > /var/log/go-server/aws_s3_backup.log 2>&1"
+    job: "PATH=$PATH /home/{{ sansible_gocd_server_user }}/bin/aws_s3_backup.sh > /var/log/go-server/aws_s3_backup.log 2>&1"
     name: Backup go-server
     minute: 0
     weekday: 1-7
 
 - name: Setup AWS credentials
   become: yes
-  become_user: "{{ gocd_server.user }}"
+  become_user: "{{ sansible_gocd_server_user }}"
   template:
-    dest: "/home/{{ gocd_server.user }}/.aws/credentials"
+    dest: "/home/{{ sansible_gocd_server_user }}/.aws/credentials"
     mode: 0600
     src: aws_credentials.j2
-  when: gocd_server.aws.access_key_id
+  when: sansible_gocd_server_aws_access_key_id
 
 - name: Restore config from AWS
   become: yes
-  become_user: "{{ gocd_server.user }}"
-  command: "/home/{{ gocd_server.user }}/bin/aws_s3_restore.sh"
+  become_user: "{{ sansible_gocd_server_user }}"
+  command: "/home/{{ sansible_gocd_server_user }}/bin/aws_s3_restore.sh"
   args:
-    chdir: "/home/{{ gocd_server.user }}"
-  when: gocd_server.aws.backup_bucket
+    chdir: "/home/{{ sansible_gocd_server_user }}"
+  when: sansible_gocd_server_aws_backup_bucket
 
 - name: Ensure gocd server is running
   become: yes
