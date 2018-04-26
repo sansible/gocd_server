@@ -78,7 +78,7 @@
       dest: "/home/{{ sansible_gocd_server_user }}/bin/aws_s3_restore.sh"
     - src: aws_s3_restore_artifacts.sh.j2
       dest: "/home/{{ sansible_gocd_server_user }}/bin/aws_s3_restore_artifacts.sh"
-  when: sansible_gocd_server_aws_backup_bucket
+  when: sansible_gocd_server_aws_backup_bucket is not none
   notify:
     - restart go-server
 
@@ -106,7 +106,7 @@
   command: "/home/{{ sansible_gocd_server_user }}/bin/aws_s3_restore.sh"
   args:
     chdir: "/home/{{ sansible_gocd_server_user }}"
-  when: sansible_gocd_server_aws_backup_bucket
+  when: sansible_gocd_server_aws_backup_bucket is not none
 
 - name: Ensure gocd server is running
   become: yes
