@@ -42,4 +42,5 @@ sansible_gocd_server_repo_source: deb https://download.gocd.org /
 sansible_gocd_server_restore_artifacts_on_boot: yes
 sansible_gocd_server_start_opts: ''
 sansible_gocd_server_user: go
+sansible_gocd_server_workdir: "/home/{{ sansible_gocd_server_user }}/work/go-server"
 sansible_gocd_server_version: 16.*

@@ -1,6 +1,7 @@
 ---
 
 galaxy_info:
+  author: sansible
   description: Install the Go Continuous Delivery server.
   license: MIT
   min_ansible_version: 2.2
@@ -10,7 +11,7 @@ galaxy_info:
         - trusty
         - xenial
         - bionic
-  categories:
+  galaxy_tags:
     - development
     - cd
 
