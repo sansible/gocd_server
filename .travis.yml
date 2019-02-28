@@ -1,7 +1,7 @@
 ---
 
 group: stable
-dist: trusty
+dist: xenial
 sudo: required
 
 language: python
