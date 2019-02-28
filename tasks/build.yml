@@ -6,36 +6,41 @@
     dest: /etc/hosts
     line: "127.0.0.1 localhost {{ ansible_hostname }}"
     regexp: ^127\.0\.0\.1
-  when: ansible_virtualization_type != 'docker'
+  when:
+    - ansible_virtualization_type != 'docker'
+    - sansible_gocd_server_fix_hostname | bool
 
 - name: Install some dependencies
   become: yes
   apt:
-    name: "{{ item }}"
-    update_cache: yes
-  with_items: "{{ sansible_gocd_server_packages }}"
+    name: "{{ sansible_gocd_server_packages }}"
 
 - name: Install AWS CLI
   become: yes
   pip:
-    name: "{{ item }}"
+    name:
+      - awscli
+      - boto
   when: sansible_gocd_server_aws_install_cli
-  with_items:
-    - awscli
-    - boto
 
-- name: Add GoCD Apt key
+- name: Download GoCD PGP key (works with Bionic behind a proxy)
+  become: yes
+  get_url:
+    dest: /usr/local/src/gocd.asc
+    mode: 0644
+    url: "https://{{ sansible_gocd_server_repo_keyserver }}/pks/lookup?op=get&search=0x{{ sansible_gocd_server_repo_key_id }}"
+
+- name: Ensures GoCD PGP key is known
   become: yes
   apt_key:
-    keyserver: hkp://keyserver.ubuntu.com:80
+    file: /usr/local/src/gocd.asc
     id: "{{ sansible_gocd_server_repo_key_id }}"
     state: present
 
-- name: Install GoCD repo
+- name: Add GoCD APT repository
   become: yes
   apt_repository:
     repo: "{{ sansible_gocd_server_repo_source }}"
-    state: present
     update_cache: yes
 
 - name: Install go-server
@@ -59,11 +64,19 @@
     - work/go-server/plugins/external
     - work/go-server/artifacts/pipelines
 
-- name: Add go-server to autostart
+- name: Add go-server to autostart for SysV
   become: yes
   service:
     name: go-server
     enabled: yes
+  when: ansible_service_mgr != "systemd"
+
+- name: Add go-server to autostart for SystemD
+  become: yes
+  systemd:
+    enabled: yes
+    name: go-server
+  when: ansible_service_mgr == "systemd"
 
 - name: Install go-server plugins
   become: yes

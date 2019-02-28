@@ -6,7 +6,9 @@
     dest: /etc/hosts
     line: "127.0.0.1 localhost {{ ansible_hostname }}"
     regexp: ^127\.0\.0\.1
-  when: ansible_virtualization_type != 'docker'
+  when:
+    - ansible_virtualization_type != 'docker'
+    - sansible_gocd_server_fix_hostname | bool
 
 - name: Copy secrets from S3
   become: yes
