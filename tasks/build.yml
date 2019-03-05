@@ -1,15 +1,5 @@
 ---
 
-- name: Ensure hostname is resolvable
-  become: yes
-  lineinfile:
-    dest: /etc/hosts
-    line: "127.0.0.1 localhost {{ ansible_hostname }}"
-    regexp: ^127\.0\.0\.1
-  when:
-    - ansible_virtualization_type != 'docker'
-    - sansible_gocd_server_fix_hostname | bool
-
 - name: Install some dependencies
   become: yes
   apt:
@@ -76,6 +66,14 @@
   systemd:
     enabled: yes
     name: go-server
+  when: ansible_service_mgr == "systemd"
+
+- name: Give GoCD user access to the SystemD service
+  become: yes
+  template:
+    dest: /etc/sudoers.d/gocd
+    mode: 0640
+    src: sudoers.d.gocd.j2
   when: ansible_service_mgr == "systemd"
 
 - name: Install go-server plugins

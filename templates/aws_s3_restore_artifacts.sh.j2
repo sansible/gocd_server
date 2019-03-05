@@ -28,7 +28,12 @@ function main {
 	fi
 
 	info "Stopping Go Server"
+
+{% if ansible_service_mgr == "systemd" -%}
+	sudo systemctl stop go-server
+{% else -%}
 	service go-server stop
+{% endif %}
 
 	info "Synchronising artifacts"
 	mkdir -p "${ARTIFACTS_DIR}"
@@ -39,7 +44,13 @@ function main {
 	ok "Pipelines artifacts synchronised"
 
 	info "Starting Go Server"
+
+{% if ansible_service_mgr == "systemd" -%}
+	sudo systemctl start go-server
+{% else -%}
 	service go-server start
+{% endif %}
+
 }
 
 main "$@"

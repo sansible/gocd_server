@@ -29,7 +29,12 @@ function main {
 	fi
 
 	info "Stopping Go Server"
+
+{% if ansible_service_mgr == "systemd" -%}
+	sudo systemctl stop go-server
+{% else -%}
 	service go-server stop
+{% endif %}
 
 	info "Downloading latest.tar.gz"
 	aws s3 cp \
@@ -99,7 +104,13 @@ function main {
 {% endif %}
 
 	info "Starting Go Server"
+
+{% if ansible_service_mgr == "systemd" -%}
+	sudo systemctl start go-server
+{% else -%}
 	service go-server start
+{% endif %}
+
 }
 
 main "$@"
