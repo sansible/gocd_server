@@ -1,0 +1,4 @@
+%{{ sansible_gocd_server_user }} ALL=NOPASSWD: /bin/systemctl restart go-server
+%{{ sansible_gocd_server_user }} ALL=NOPASSWD: /bin/systemctl start go-server
+%{{ sansible_gocd_server_user }} ALL=NOPASSWD: /bin/systemctl status go-server
+%{{ sansible_gocd_server_user }} ALL=NOPASSWD: /bin/systemctl stop go-server
