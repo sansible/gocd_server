@@ -40,7 +40,7 @@ sansible_gocd_server_port: 8153
 sansible_gocd_server_port_ssl: 8154
 sansible_gocd_server_repo_key_id: 8816C449
 sansible_gocd_server_repo_source: deb https://download.gocd.org /
-sansible_gocd_server_repo_keyserver: keyserver.ubuntu.com
+sansible_gocd_server_repo_keyserver: http://eu.pool.sks-keyservers.net
 sansible_gocd_server_restore_artifacts_on_boot: yes
 sansible_gocd_server_start_opts: ''
 sansible_gocd_server_user: go

@@ -18,7 +18,11 @@
   get_url:
     dest: /usr/local/src/gocd.asc
     mode: 0644
-    url: "https://{{ sansible_gocd_server_repo_keyserver }}/pks/lookup?op=get&search=0x{{ sansible_gocd_server_repo_key_id }}"
+    url: "{{ sansible_gocd_server_repo_keyserver }}/pks/lookup?op=get&search=0x{{ sansible_gocd_server_repo_key_id }}"
+  retries: 2
+  delay: 10
+  register: sansible_server_agent_pgp_result
+  until: sansible_server_agent_pgp_result is succeeded
 
 - name: Ensures GoCD PGP key is known
   become: yes
