@@ -1,0 +1,6 @@
+#jinja2: lstrip_blocks: True
+# {{ ansible_managed }}
+
+{% for prop, value in sansible_gocd_server_properties_combined.items() %}
+{{ prop }}={{ value }}
+{% endfor %}

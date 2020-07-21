@@ -4,12 +4,11 @@ galaxy_info:
   author: sansible
   description: Install the Go Continuous Delivery server.
   license: MIT
-  min_ansible_version: 2.5
-  min_ansible_container_version: 2.5
+  min_ansible_version: 2.8
+  min_ansible_container_version: 2.8
   platforms:
     - name: Ubuntu
       versions:
-        - trusty
         - xenial
         - bionic
   galaxy_tags:
@@ -24,7 +23,3 @@ dependencies:
       - name: "{{ sansible_gocd_server_user }}"
         gecos: Go CD user
         group: "{{ sansible_gocd_server_group }}"
-
-  - role: sansible.java
-    sansible_java_version: "{{ sansible_gocd_server_java_version }}"
-    when: not sansible_gocd_server_dependencies_skip_java

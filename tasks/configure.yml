@@ -38,12 +38,14 @@
 - name: Ensures go-server configuration
   become: yes
   template:
-    dest: /etc/default/go-server
+    dest: /usr/share/go-server/wrapper-config/wrapper-properties.conf
     group: "{{ sansible_gocd_server_group }}"
     owner: "{{ sansible_gocd_server_user }}"
-    src: defaults.j2
-  notify:
-    - restart go-server
+    src: wrapper-properties.conf.j2
+  vars:
+    sansible_gocd_server_properties_combined: "{{ sansible_gocd_server_properties_default | combine(
+        sansible_gocd_server_properties, recursive=True
+      ) }}"
 
 - name: Ensures go-server user passwords file
   become: yes
@@ -82,6 +84,9 @@
     name: Backup go-server
     minute: 0
     weekday: 1-7
+  when:
+    - sansible_gocd_server_aws_backup_bucket is not none
+    - sansible_gocd_server_backup_cron_enabled
 
 - name: Setup AWS credentials
   become: yes
@@ -90,7 +95,7 @@
     dest: "/home/{{ sansible_gocd_server_user }}/.aws/credentials"
     mode: 0600
     src: aws_credentials.j2
-  when: sansible_gocd_server_aws_access_key_id
+  when: sansible_gocd_server_aws_access_key_id is not none
 
 - name: Restore config from AWS
   become: yes

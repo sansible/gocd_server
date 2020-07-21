@@ -1,12 +1,13 @@
 ---
 
 group: stable
-dist: xenial
+dist: bionic
+
 sudo: required
 
 language: python
 python:
-  - 2.7
+  - 3.6
 cache: pip
 
 branches:
@@ -15,9 +16,8 @@ branches:
     - master
 
 env:
-  - ANSIBLE_INSTALL_VERSION=2.5.15
-  - ANSIBLE_INSTALL_VERSION=2.6.16
-  - ANSIBLE_INSTALL_VERSION=2.7.10
+  - ANSIBLE_INSTALL_VERSION=2.8.13
+  - ANSIBLE_INSTALL_VERSION=2.9.11
 
 services:
   - docker
