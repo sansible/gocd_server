@@ -1,0 +1,27 @@
+---
+
+- name: Prepare
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Install pre-requisite packages
+      become: yes
+      apt:
+        name:
+          - apt-transport-https
+          - cron
+          - lsb-release
+          - python3-pip
+          - python3-setuptools
+          - unzip
+        update_cache: yes
+
+    - name: Symlink pip3 for TestInfra
+      become: yes
+      file:
+        dest: /usr/bin/pip
+        force: no
+        mode: 0751
+        src: /usr/bin/pip3
+        state: link

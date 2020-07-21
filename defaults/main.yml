@@ -15,22 +15,19 @@ sansible_gocd_server_aws_region: eu-west-1
 #     mode: 0600
 sansible_gocd_server_aws_s3_secret_files: []
 sansible_gocd_server_aws_secret_access_key: ~
+sansible_gocd_server_backup_cron_enabled: yes
 sansible_gocd_server_backup_passwd: backup
 sansible_gocd_server_backup_user: backup
-sansible_gocd_server_dependencies_skip_java: no
-sansible_gocd_server_fix_hostname: yes
 sansible_gocd_server_group: go
-sansible_gocd_server_java_version: 8
-sansible_gocd_server_max_mem: 512m
-sansible_gocd_server_max_perm_gen: 128m
-sansible_gocd_server_mem: 256m
-sansible_gocd_server_min_perm_gen: 128m
+sansible_gocd_server_max_mem: "{{ (ansible_memtotal_mb / 2) | int }}M"
+sansible_gocd_server_max_perm_gen: 256M
+sansible_gocd_server_mem: "{{ (ansible_memtotal_mb / 4) | int }}M"
+sansible_gocd_server_min_perm_gen: 256M
 sansible_gocd_server_packages:
   - apt-transport-https
   - cron
   - git
   - net-tools
-  - python-pip
   - tree
   - unzip
 sansible_gocd_server_passwd_users:
@@ -38,11 +35,11 @@ sansible_gocd_server_passwd_users:
 sansible_gocd_server_plugins: []
 sansible_gocd_server_port: 8153
 sansible_gocd_server_port_ssl: 8154
+sansible_gocd_server_properties: {}
 sansible_gocd_server_repo_key_id: 8816C449
 sansible_gocd_server_repo_source: deb https://download.gocd.org /
-sansible_gocd_server_repo_keyserver: http://eu.pool.sks-keyservers.net
+sansible_gocd_server_repo_keyserver: https://keyserver.ubuntu.com
 sansible_gocd_server_restore_artifacts_on_boot: yes
-sansible_gocd_server_start_opts: ''
 sansible_gocd_server_user: go
 sansible_gocd_server_workdir: "/home/{{ sansible_gocd_server_user }}/work/go-server"
-sansible_gocd_server_version: 16.*
+sansible_gocd_server_version: 19.*

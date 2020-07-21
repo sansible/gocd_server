@@ -1,0 +1,11 @@
+---
+
+- name: Converge
+  hosts: all
+
+  roles:
+    - role: gocd_server
+      sansible_gocd_server_max_mem: 512m
+      sansible_gocd_server_max_perm_gen: 128m
+      sansible_gocd_server_mem: 256m
+      sansible_gocd_server_min_perm_gen: 128m

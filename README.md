@@ -19,22 +19,18 @@ For more information about GO CD please visit
 
 ## Installation and Dependencies
 
-This role has a "java" dependency. You can let this role install Oracle
-Java 8, or install it yourself and set
-`sansible_gocd_server_dependencies_skip_java` to `yes`.
-
-AWS CLI tools are also installed by default, you can turn this feature off
-by setting `sansible_gocd_server_aws_install_cli` to `no`.
-
 To install this role run `ansible-galaxy install sansible.gocd_server`
 or add this to your `roles.yml`
 
 ```YAML
 - name: sansible.gocd_server
-  version: v2.0
+  version: v3.0
 ```
 
-and run `ansible-galaxy install -p ./roles -r roles.yml`
+and run `ansible-galaxy install -p ./roles -r roles.yml`.
+
+The `sansible.users_and_groups` role is required to use this
+role.
 
 
 ## Tags
@@ -46,6 +42,9 @@ This role uses two tags: **build** and **configure**
 
 
 ## Examples
+
+Please see [defaults/main.yml](defaults/main.yml) and [vars/main.yml](vars/main.yml)
+for available settings and defaults.
 
 To simply install GO CD server:
 
@@ -64,7 +63,7 @@ To simply install GO CD server:
     - name: sansible.gocd_server
 ```
 
-A bit more advanced playbook to install on a box with more then 4GB ram:
+Adding some additional system properties/startup options and some plugins:
 
 ```YAML
 - name: Install GO CD Server
@@ -79,31 +78,13 @@ A bit more advanced playbook to install on a box with more then 4GB ram:
 
   roles:
     - role: sansible.gocd_server
-      sansible_gocd_server_max_mem: 4096m
-      sansible_gocd_server_max_perm_gen: 256m
-      sansible_gocd_server_mem: 2048m
-      sansible_gocd_server_min_perm_gen: 128m
-      sansible_gocd_server_version: "14.4.*"
-```
-
-**Skip Java** installation, if you want to use your own Java role
-
-```YAML
-- name: Install GO CD Server
-  hosts: sandbox
-
-  pre_tasks:
-    - name: Update apt
-      become: yes
-      command: apt-get update
-      tags:
-        - build
-
-  roles:
-    - name: my-own.java
-
-    - name: sansible.gocd_server
-      sansible_gocd_server_dependencies_skip_java: yes
+      sansible_gocd_server_plugins:
+        - "https://github.com/ashwanthkumar/gocd-build-github-pull-requests/releases/download/v1.3.5/github-pr-poller-1.3.5.jar"
+        - "https://github.com/gocd-contrib/gocd-build-status-notifier/releases/download/1.6-73/github-pr-status-1.6-73.jar"
+        - "https://github.com/gocd-contrib/script-executor-task/releases/download/0.3/script-executor-0.3.0.jar"
+      sansible_gocd_server_properties:
+        "wrapper.java.additional.103": "-Dmail.smtp.starttls.enable=true"
+        "wrapper.java.additional.104": "-Dgo.plugin.build.status.go-server=http://gocd-server:8153"
 ```
 
 To **generate passwd file** you have to specify a dictionary of
