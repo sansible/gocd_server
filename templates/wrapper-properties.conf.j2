@@ -1,6 +1,14 @@
 #jinja2: lstrip_blocks: True
 # {{ ansible_managed }}
 
-{% for prop, value in sansible_gocd_server_properties_combined.items() %}
+wrapper.working.dir={{ sansible_gocd_server_workdir }}
+wrapper.java.additional.2=-Xmx{{ sansible_gocd_server_max_mem }}
+wrapper.java.additional.100=-Dcruise.server.port={{ sansible_gocd_server_port }}
+wrapper.java.additional.101=-Dcruise.server.ssl.port={{ sansible_gocd_server_port_ssl }}
+wrapper.java.additional.102=-Xms{{ sansible_gocd_server_mem }}
+wrapper.java.additional.103=-XX:PermSize={{ sansible_gocd_server_min_perm_gen }}
+wrapper.java.additional.104=-XX:MaxPermSize={{ sansible_gocd_server_max_perm_gen }}
+
+{% for prop, value in sansible_gocd_server_properties.items() %}
 {{ prop }}={{ value }}
 {% endfor %}

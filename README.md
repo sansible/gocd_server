@@ -63,7 +63,8 @@ To simply install GO CD server:
     - name: sansible.gocd_server
 ```
 
-Adding some additional system properties/startup options and some plugins:
+Adding some additional system properties/startup options and some plugins, you must
+start from 105 for additional properties:
 
 ```YAML
 - name: Install GO CD Server
@@ -83,8 +84,8 @@ Adding some additional system properties/startup options and some plugins:
         - "https://github.com/gocd-contrib/gocd-build-status-notifier/releases/download/1.6-73/github-pr-status-1.6-73.jar"
         - "https://github.com/gocd-contrib/script-executor-task/releases/download/0.3/script-executor-0.3.0.jar"
       sansible_gocd_server_properties:
-        "wrapper.java.additional.103": "-Dmail.smtp.starttls.enable=true"
-        "wrapper.java.additional.104": "-Dgo.plugin.build.status.go-server=http://gocd-server:8153"
+        "wrapper.java.additional.105": "-Dmail.smtp.starttls.enable=true"
+        "wrapper.java.additional.106": "-Dgo.plugin.build.status.go-server=http://gocd-server:8153"
 ```
 
 To **generate passwd file** you have to specify a dictionary of
