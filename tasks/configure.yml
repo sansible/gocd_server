@@ -42,7 +42,7 @@
     group: "{{ sansible_gocd_server_group }}"
     owner: "{{ sansible_gocd_server_user }}"
     src: wrapper-properties.conf.j2
-  notify: restart go-server
+  register: sansible_gocd_server_config_file_update
 
 - name: Ensures go-server user passwords file
   become: yes
@@ -70,7 +70,6 @@
     - src: aws_s3_restore_artifacts.sh.j2
       dest: "/home/{{ sansible_gocd_server_user }}/bin/aws_s3_restore_artifacts.sh"
   when: sansible_gocd_server_aws_backup_bucket is not none
-  notify: restart go-server
 
 - name: Ensures go-server backup cron job
   become: yes
@@ -100,6 +99,15 @@
   args:
     chdir: "/home/{{ sansible_gocd_server_user }}"
   when: sansible_gocd_server_aws_backup_bucket is not none
+
+- name: Restart gocd server if config has changed and no restore taking place
+  become: yes
+  service:
+    name: go-server
+    state: restarted
+  when:
+    - not sansible_gocd_server_aws_backup_bucket
+    - sansible_gocd_server_config_file_update.changed
 
 - name: Ensure gocd server is running
   become: yes
