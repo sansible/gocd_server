@@ -27,6 +27,7 @@ sansible_gocd_server_packages:
   - apt-transport-https
   - cron
   - git
+  - jq
   - net-tools
   - tree
   - unzip
