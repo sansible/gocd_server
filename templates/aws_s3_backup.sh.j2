@@ -33,7 +33,7 @@ function main {
 		ok "Backup finished!"
 	fi
 
-	backup_path="$( echo "${response}" | python -c"import sys,json;j=json.loads(sys.stdin.read());print j['path']" )"
+	backup_path="$( echo "${response}" | jq -r '.["path"]' )"
 	backup_folder="$( basename "${backup_path}" )"
 	backup_dir="$( dirname "${backup_path}" )"
 
