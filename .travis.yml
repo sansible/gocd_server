@@ -23,8 +23,11 @@ services:
   - docker
 
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-ce
+  - tmpdaemon=$(mktemp)
+  - sudo jq '."registry-mirrors" += ["https://mirror.gcr.io"]' /etc/docker/daemon.json > $tmpdaemon
+  - sudo mv $tmpdaemon /etc/docker/daemon.json
+  - sudo systemctl daemon-reload
+  - sudo systemctl restart docker
 
 install:
   - make deps
