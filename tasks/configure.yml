@@ -100,17 +100,14 @@
     chdir: "/home/{{ sansible_gocd_server_user }}"
   when: sansible_gocd_server_aws_backup_bucket is not none
 
-- name: Restart gocd server if config has changed and no restore taking place
-  become: yes
-  service:
-    name: go-server
-    state: restarted
-  when:
-    - not sansible_gocd_server_aws_backup_bucket
-    - sansible_gocd_server_config_file_update.changed
-
 - name: Ensure gocd server is running
   become: yes
   service:
     name: go-server
     state: started
+
+- name: Wait for service port
+  wait_for:
+    port: "{{ sansible_gocd_server_port }}"
+    state: started
+    timeout: 300

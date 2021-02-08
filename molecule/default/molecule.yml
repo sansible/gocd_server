@@ -21,6 +21,8 @@ platforms:
 
 provisioner:
   name: ansible
+  env:
+    ANSIBLE_LOCAL_TEMP: /tmp
 
 lint: |
   set -e

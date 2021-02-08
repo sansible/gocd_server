@@ -24,7 +24,7 @@ or add this to your `roles.yml`
 
 ```YAML
 - name: sansible.gocd_server
-  version: v3.0
+  version: v3.1
 ```
 
 and run `ansible-galaxy install -p ./roles -r roles.yml`.
